@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ExamManageMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.ExamManage" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sn" property="sn" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="examtime" property="examtime" jdbcType="TIMESTAMP" />
+    <result column="examResult" property="examResult" jdbcType="VARCHAR" />
+    <result column="examRemark" property="examRemark" jdbcType="VARCHAR" />
+    <!--<result column="employee_id" property="employeeId" jdbcType="BIGINT" />-->
+      <association property="employee" javaType="Employee" column="employee_id"
+                   select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+    <!--<result column="student_id" property="studentId" jdbcType="BIGINT" />-->
+      <association property="student" javaType="PotentialCustom" column="student_id"
+                   select="com.student.crm.mapper.PotentialCustomMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from exammanage
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.ExamManage" useGeneratedKeys="true" keyProperty="id" >
+    insert into exammanage (sn, name, student_id, 
+      examtime, examResult, examRemark, 
+      employee_id)
+    values (#{sn,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{student.id,jdbcType=BIGINT},
+      #{examtime,jdbcType=TIMESTAMP}, #{examResult,jdbcType=VARCHAR}, #{examRemark,jdbcType=VARCHAR}, 
+      #{employee.id,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.ExamManage" >
+    update exammanage
+    set sn = #{sn,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      student_id = #{studentId,jdbcType=BIGINT},
+      examtime = #{examtime,jdbcType=TIMESTAMP},
+      examResult = #{examResult,jdbcType=VARCHAR},
+      examRemark = #{examRemark,jdbcType=VARCHAR},
+      employee_id = #{employeeId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateResult">
+        UPDATE exammanage
+        SET   examResult = #{examResult,jdbcType=VARCHAR}
+        where id = #{id}
+    </update>
+
+    <sql id="base_select">
+        id, sn, name, student_id, examtime, examResult, examRemark, employee_id
+    </sql>
+    <sql id="base_from">
+        exammanage
+    </sql>
+    <sql id="base_where">
+        <where>
+
+        </where>
+    </sql>
+
+
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select <include refid="base_select"/>
+        from <include refid="base_from"/>
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" >
+        select <include refid="base_select"/>
+        from <include refid="base_from"/>
+    </select>
+
+
+
+    <select id="queryForCount" resultType="java.lang.Long">
+        select count(id)
+        from <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+    <select id="queryDataList" resultMap="BaseResultMap">
+        select <include refid="base_select"/>
+        from <include refid="base_from"/>
+        <include refid="base_where"/>
+        LIMIT #{start} ,#{rows}
+    </select>
+
+
+</mapper>

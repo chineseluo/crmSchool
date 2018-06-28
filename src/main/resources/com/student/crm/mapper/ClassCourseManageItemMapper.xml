@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ClassCourseManageItemMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.ClassCourseManageItem" >
+    <id column="id" property="id"  />
+
+	<result column="weekday" property="weekday"  />
+	<result column="remark" property="remark"  />
+	<result column="state" property="state"  />
+	<result column="date" property="date"  />
+	<result column="courseName" property="courseName"  />
+      <!--***************************关联教室*******************************-->
+  <association property="classroomManage" javaType="com.student.crm.domain.ClassRoomManage" columnPrefix="room_">
+      <id column="id" property="id"  />
+      <result property="name" column="name"/>
+  </association>
+      <!--***************************关联班级*******************************-->
+  <association property="classGrade" javaType="com.student.crm.domain.Classroom" columnPrefix="class_">
+      <id column="id" property="id"  />
+      <result property="name" column="name"/>
+  </association>
+      <!--***************************关联员工 老师*******************************-->
+  <association property="courseTeacher" javaType="com.student.crm.domain.Employee" columnPrefix="c_">
+      <id column="id" property="id"  />
+      <result property="realname" column="name"/>
+  </association>
+      <!--***************************关联员工 老师*******************************-->
+  <association property="gradeTeacher" javaType="com.student.crm.domain.Employee" columnPrefix="g_">
+      <id column="id" property="id"  />
+      <result property="realname" column="name"/>
+  </association>
+  </resultMap>
+  <delete id="delete" parameterType="long" >
+    delete from classCourseManageItem where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.ClassCourseManageItem" useGeneratedKeys="true" keyProperty="id" >
+    insert into classCourseManageItem 
+    (room_id,gradeTeacher_id,weekday,remark,state,courseTeacher_id,class_id,date,courseName)
+    values 
+    (#{classroomManage.id},#{gradeTeacher.id},#{weekday},#{remark},#{state},#{courseTeacher.id},#{classGrade.id},#{date},#{courseName})
+  </insert>
+  <update id="update" parameterType="com.student.crm.domain.ClassCourseManageItem" >
+    update classCourseManageItem
+    set
+        room_id=#{classroomManage.id},
+        gradeTeacher_id=#{gradeTeacher.id},
+	    weekday=#{weekday},
+	    remark=#{remark},
+	    state=#{state},
+        courseTeacher_id=#{courseTeacher.id},
+        class_id=#{classGrade.id},
+	    date=#{date},
+	    courseName=#{courseName}
+    where id = #{id}
+  </update>
+  <select id="select" resultType="com.student.crm.domain.ClassCourseManageItem" parameterType="long" >
+    select * from classCourseManageItem where id = #{id}
+  </select>
+  <select id="selectAll" resultType="com.student.crm.domain.ClassCourseManageItem"  >
+    select * from classCourseManageItem course
+
+  </select>
+
+    <sql id="base_where">
+        <where>
+            <if test="roomId!=null">
+                course.room_id =#{roomId}
+            </if>
+            <if test="courseTeacherId!=null">
+                and course.courseTeacher_id =#{courseTeacherId}
+            </if>
+            <if test="classId!=null ">
+                and course.class_id =#{classId}
+            </if>
+            <if test="date!=null and date!=''">
+                and course.date =#{date}
+            </if>
+            <if test="beginDate!=null and beginDate!=''">
+                and course.date >=#{beginDate}
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                and course.date &lt;=#{endDate}
+            </if>
+            <if test="classroomNameId!=null">
+                and course.class_id = #{classroomNameId}
+            </if>
+        </where>
+    </sql>
+
+  <select id="queryPageCount" resultType="long">
+  	select count(course.id) from classCourseManageItem course
+     <include refid="base_where"/>
+  </select>
+  <select id="queryPageData" resultMap="BaseResultMap">
+      select
+      course.id,course.date,course.weekday,course.remark,course.state,course.coursename
+      ,emp.id as c_id,emp.realname as c_name
+      ,e.id as g_id,e.realname as g_name
+      ,class.id as class_id,class.name as class_name
+      ,room.id as room_id,room.name as room_name
+      from classCourseManageItem course
+      LEFT JOIN employee emp ON  course.courseTeacher_id = emp.id
+      LEFT JOIN employee e ON  course.gradeTeacher_id = e.id
+      LEFT JOIN classroom class ON class.id =course.class_id
+      LEFT JOIN classroommanage room ON room.id =course.room_id
+      <include refid="base_where"/>
+  	limit #{start},#{rows}
+  </select>
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ClassRoomManageMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.ClassRoomManage" >
+    <id column="id" property="id"  />
+	<result column="state" property="state"  />
+	<result column="seatNumber" property="seatNumber"  />
+	<result column="address" property="address"  />
+  </resultMap>
+  <delete id="delete" parameterType="long" >
+    delete from classRoomManage where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.ClassRoomManage" useGeneratedKeys="true" keyProperty="id" >
+    insert into classRoomManage 
+    (name,state,seatNumber,address)
+    values 
+    (#{name},#{state},#{seatNumber},#{address})
+  </insert>
+  <update id="update" parameterType="com.student.crm.domain.ClassRoomManage" >
+    update classRoomManage
+    set
+        name=#{name},
+	    state=#{state},
+	    seatNumber=#{seatNumber},
+	    address=#{address}
+    where id = #{id}
+  </update>
+    <update id="updateState">
+        update classRoomManage
+        set
+            state=#{state}
+        where id = #{id}
+    </update>
+
+    <update id="updateState2">
+        update classRoomManage
+        set
+            state=#{state}
+        where id in
+                <foreach collection="ids" open="(" separator="," close=")" item="id" >
+                    #{id}
+                </foreach>
+    </update>
+
+    <select id="selectUnuseIds" resultType="long"  >
+        SELECT  id FROM classroommanage WHERE id not in (
+            SELECT DISTINCT course.room_id FROM classcoursemanageitem course LEFT JOIN classcoursemanage room
+                    ON course.room_id=room.id
+        )
+  </select>
+    <select id="select" resultMap="BaseResultMap" parameterType="long" >
+    select * from classRoomManage where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select * from classRoomManage
+  </select>
+<sql id="base_where">
+    <where>
+        <if test="keyword!=null">
+           and  ( address like concat('%',#{keyword},'%') or name like concat('%',#{keyword},'%') )
+        </if>
+    </where>
+</sql>
+
+
+  <select id="queryPageCount" resultType="long">
+  	select count(id) from classRoomManage
+  <include refid="base_where"/>
+
+  </select>
+  <select id="queryPageData" resultMap="BaseResultMap">
+  	select * from classRoomManage
+      <include refid="base_where"/>
+  	limit #{start},#{rows}
+  </select>
+</mapper>

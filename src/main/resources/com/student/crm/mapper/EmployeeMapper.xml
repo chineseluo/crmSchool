@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.EmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Employee" >
+    <id column="id" property="id"  />
+    <result column="username" property="username"  />
+    <result column="realName" property="realname"  />
+    <result column="password" property="password"  />
+    <result column="tel" property="tel"  />
+    <result column="email" property="email"  />
+    <result column="inputTime" property="inputtime"  />
+    <result column="state" property="state"  />
+    <result column="admin" property="admin"  />
+    <association property="dept" javaType="com.student.crm.domain.Department">
+    	<id column="dept_id" property="id"/>
+    	<result column="dept_name" property="name"/>
+    </association>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from employee where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.Employee" useGeneratedKeys="true" keyProperty="id" >
+    insert into employee (username, realName, password, 
+      tel, email, dept_id, 
+      inputTime, state, admin)
+    values (#{username}, #{realname}, #{password}, 
+      #{tel}, #{email}, #{dept.id}, 
+      #{inputtime}, #{state}, #{admin})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Employee" >
+    update employee
+    <set>
+      username = #{username},
+      realName = #{realname},
+      tel = #{tel},
+      email = #{email},
+      dept_id = #{dept.id},
+      <if test="password!=null">
+      	password = #{password},
+      </if>
+      <if test="inputtime!=null">
+      	inputTime = #{inputtime},
+      </if>
+      <if test="state!=null">
+       	state = #{state},
+      </if>
+      <if test="admin!=null">
+      	admin = #{admin}
+      </if>
+     </set>
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, username, realName, password, tel, email, dept_id, inputTime, state, admin
+    from employee
+    where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, username, realName, password, tel, email, dept_id, inputTime, state, admin
+    from employee
+  </select>
+  
+  <select id="login" resultMap="BaseResultMap">
+	select  id, username, realName, password, tel, email, inputTime, state, admin from employee where username = #{username} and password = #{password}
+  </select>
+  
+  <sql id="condition_sql">
+  	<where>
+  		<if test="keyword!=null">
+  			(emp.username like concat('%',#{keyword},'%') or emp.realname like concat('%',#{keyword},'%'))
+  		</if>
+        <if test="inChangeUserId != null">
+            emp.id = #{inChangeUserId}
+        </if>
+  	</where>
+  </sql>
+  
+  <select id="queryPageCount" resultType="long">
+  	select count(*) from employee emp
+  	<include refid="condition_sql"/>
+  </select>
+  <select id="queryPageData" resultMap="BaseResultMap">
+  	select 
+		 emp.id, emp.username, emp.realName, emp.password, emp.tel, emp.email, emp.inputTime, emp.state, emp.admin,
+		 dept.id as dept_id,dept.`name` as dept_name
+	from employee emp LEFT JOIN department dept on (dept.id=emp.dept_id)
+	<include refid="condition_sql"/>
+	limit #{start},#{rows}
+  </select>
+  
+  <update id="changeState">
+  	update employee set state = #{employeeState} where id = #{employeeId}
+  </update>
+  
+  <insert id="insertRelation">
+  	insert into employee_role(employee_id,role_id) values(#{employeeId},#{roleId})
+  </insert>
+  
+  <select id="queryPermissionByEmployeeId" resultType="com.student.crm.domain.Permission">
+  	select * from permission where id in (
+		select permission_id from role_permission where role_id IN
+	  (
+			select role_id from employee_role where employee_id =#{employeeId}
+		)
+	)
+  </select>
+    <select id="queryByUsername" resultMap="BaseResultMap">
+        select id, username, realName, password, tel, email, dept_id, inputTime, state, admin
+        from employee
+        where username = #{username}
+    </select>
+    <select id="queryEmpByRoleSn" resultType="com.student.crm.domain.Employee">
+        select * from employee where id in (
+            select employee_id from employee_role where role_id = (
+                select id from role where sn = #{sn}
+            )
+        )
+    </select>
+    <delete id="deleteRelation">
+  	delete from employee_role where employee_id=#{employeeId}
+  </delete>
+</mapper>

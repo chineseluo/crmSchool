@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.InstituteMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Institute" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sn" property="sn" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from institute
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.Institute" useGeneratedKeys="true" keyProperty="id" >
+    insert into institute (sn, name)
+    values (#{sn,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Institute" >
+    update institute
+    set sn = #{sn,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, sn, name
+    from institute
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, sn, name
+    from institute
+  </select>
+  <sql id="base_select">
+
+  </sql>
+  <sql id="base_from">
+
+  </sql>
+  <sql id="base_where">
+    <where>
+
+    </where>
+  </sql>
+  <select id="queryCount" resultType="java.lang.Long">
+    select count(id) from institute
+    <include refid="base_where"/>
+  </select>
+  <select id="list" resultType="com.student.crm.domain.Institute">
+    select * from institute
+    <include refid="base_where"/>
+    limit #{start},#{rows}
+  </select>
+</mapper>

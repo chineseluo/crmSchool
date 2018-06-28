@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.SaleChartMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.SaleChart" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="saleDate" property="saleDate" jdbcType="DATE" />
+    <result column="saleAmount" property="saleAmount" jdbcType="DECIMAL" />
+    <result column="livesubsidy" property="livesubsidy" jdbcType="DECIMAL" />
+    <result column="workday" property="workday" jdbcType="INTEGER" />
+    <result column="totalworkday" property="totalworkday" jdbcType="INTEGER" />
+    <result column="socialsecurity" property="socialsecurity" jdbcType="DECIMAL" />
+    <result column="actualsalary" property="actualsalary" jdbcType="DECIMAL" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <association property="username" columnPrefix="emp_" javaType="com.student.crm.domain.Employee">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+    <association property="dept" columnPrefix="dept_" javaType="com.student.crm.domain.Department">
+      <id column="id" property="id"/>
+      <result column="name" property="name"/>
+    </association>
+
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from salechart
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.SaleChart" useGeneratedKeys="true" keyProperty="id" >
+    insert into salechart (saleDate, username_id, dept_id,
+                           saleAmount, livesubsidy, workday,
+      totalworkday, socialsecurity, actualsalary,
+      remarks)
+    values (#{saleDate}, #{username.id}, #{dept.id},
+      #{saleAmount}, #{livesubsidy}, #{workday},
+      #{totalworkday}, #{socialsecurity}, #{actualsalary},
+      #{remarks})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.SaleChart" >
+    update salechart
+    set saleDate = #{saleDate},
+      username_id = #{username.id},
+      dept_id = #{dept.id},
+      saleAmount = #{saleAmount},
+      livesubsidy = #{livesubsidy},
+      workday = #{workday},
+      totalworkday = #{totalworkday},
+      socialsecurity = #{socialsecurity},
+      actualsalary = #{actualsalary},
+      remarks = #{remarks}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select s.id, s.saleDate, s.saleAmount, s.livesubsidy, s.workday, s.totalworkday,
+      s.socialsecurity, s.actualsalary, s.remarks,
+      emp.id emp_id, emp.username emp_username,
+      dept.id dept_id, dept.name dept_name
+    from salechart s LEFT JOIN employee emp ON s.salesman_id = emp.id
+      LEFT JOIN department dept ON s.dept_id = dept.id
+    where s.id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select s.id, s.saleDate, s.saleAmount, s.livesubsidy, s.workday, s.totalworkday,
+      s.socialsecurity, s.actualsalary, s.remarks,
+      emp.id emp_id, emp.username emp_username,
+      dept.id dept_id, dept.name dept_name
+      from salechart s LEFT JOIN employee emp ON s.salesman_id = emp.id
+      LEFT JOIN department dept ON s.dept_id = dept.id
+  </select>
+  <sql id="base_where">
+    <where>
+    <if test="beginDate != null and beginDate != ''">
+       s.saleDate &gt;= #{beginDate}
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and s.saleDate &lt;= #{endDate}
+    </if>
+    </where>
+  </sql>
+  <sql id="base_keyword">
+    <where>
+      <if test="keyword != null">
+        s.remarks = #{keyword}
+      </if>
+    </where>
+  </sql>
+  <select id="queryPageByCount" resultType="java.lang.Long">
+    SELECT count(*) FROM salechart s
+    <include refid="base_where"/>
+    <include refid="base_keyword"/>
+  </select>
+  <select id="queryByCondition" resultMap="BaseResultMap">
+    SELECT s.id, s.saleDate, s.saleAmount, s.livesubsidy, s.workday, s.totalworkday,
+    s.socialsecurity, s.actualsalary, s.remarks,
+    emp.id emp_id, emp.username emp_username,
+    dept.id dept_id, dept.name dept_name
+    from salechart s LEFT JOIN employee emp ON s.username_id = emp.id
+    LEFT JOIN department dept ON s.dept_id = dept.id
+      <include refid="base_where"/>
+      <include refid="base_keyword"/>
+      LIMIT #{start},#{rows}
+  </select>
+
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Role" >
+    <id column="id" property="id"  />
+	<result column="sn" property="sn"  />
+	<result column="name" property="name"  />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from role where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.Role" useGeneratedKeys="true" keyProperty="id" >
+    insert into role 
+    (sn,name)
+    values 
+    (#{sn},#{name})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Role" >
+    update role
+    set
+	    sn=#{sn},
+	    name=#{name}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select * from role where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select * from role
+  </select>
+  <sql id="conditionSql">
+  	<where>
+  	</where>
+  </sql>
+  <select id="queryPageCount" resultType="long">
+  	select count(0) from role
+  	<include refid="conditionSql"/>
+  </select>
+  <select id="queryPageDataResult" resultMap="BaseResultMap">
+  	select * from role
+  	<include refid="conditionSql"/>
+  	limit #{start},#{rows}
+  </select>
+  <insert id="insertRelation">
+  	insert into role_permission(role_id,permission_id) values(#{roleId},#{permissionId})
+  </insert>
+  <delete id="deleteRelation">
+  	delete from role_permission where role_id = #{roleId}
+  </delete>
+  <select id="queryRoleIdListForEmployeeForm" resultType="long">
+  	select role_id from employee_role where employee_id = #{employeeId}
+  </select>
+    <select id="queryRolesByEmpId" resultType="java.lang.String">
+        select sn from role where id in (
+            select role_id from employee_role where role_id = #{id}
+        )
+    </select>
+    <insert id="insertMeneRelation">
+  	insert into role_menu(role_id,menu_id) values(#{roleId},#{menuId})
+  </insert>
+  <delete id="deleteMenuRelation">
+  	delete from role_menu where role_id = #{roleId}
+  </delete>
+
+
+
+</mapper>

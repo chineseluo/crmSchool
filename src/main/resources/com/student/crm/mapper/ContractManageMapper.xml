@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ContractManageMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.ContractManage" >
+    <id column="id" property="id"  />
+     <!-- 附件-->
+	<result column="accessory" property="accessory"  />
+	<result column="contractSn" property="contractSn"  />
+	<result column="signTime" property="signTime"  />
+	<result column="orderAmount" property="orderAmount"  />
+	<result column="state" property="state"  />
+	<result column="totalAmount" property="totalAmount"  />
+	<result column="mark" property="mark"  />
+	<result column="recentUpdateTime" property="recentUpdateTime"  />
+
+      <association property="client" javaType="com.student.crm.domain.PotentialCustom" columnPrefix="client_" >
+          <id column="id" property="id"  />
+          <result property="name" column="name"/>
+      </association>
+      <association property="recentUpdateMan" javaType="com.student.crm.domain.Employee" columnPrefix="update_" >
+          <id column="id" property="id"  />
+          <result property="realname" column="realname"/>
+      </association>
+      <association property="saleMan" javaType="com.student.crm.domain.Employee" columnPrefix="sale_" >
+          <id column="id" property="id"  />
+          <result property="realname" column="realname"/>
+      </association>
+  </resultMap>
+  <delete id="delete" parameterType="long" >
+    delete from contractManage where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.ContractManage" useGeneratedKeys="true" keyProperty="id" >
+    insert into contractManage 
+    (accessory,client_id,signTime,saleman_id,orderAmount,totalAmount,mark,state,contractSn)
+    values 
+ (#{accessory},#{client.id},#{signTime},#{saleMan.id},#{orderAmount},#{totalAmount},#{mark},#{state},#{contractSn})
+  </insert>
+  <update id="update" parameterType="com.student.crm.domain.ContractManage" >
+    update contractManage
+    set
+      <if test="accessory!=null">
+          accessory=#{accessory},
+      </if>
+      <if test="client!=null">
+          client_id=#{client.id},
+      </if>
+      <if test="signTime!=null">
+          signTime=#{signTime},
+      </if>
+      <if test="orderAmount!=null">
+          orderAmount=#{orderAmount},
+      </if>
+      <if test="totalAmount!=null">
+          totalAmount=#{totalAmount},
+      </if>
+      <if test="mark!=null">
+          mark=#{mark},
+      </if>
+        <if test="state!=null">
+            state=#{state},
+        </if>
+        <if test="recentUpdateMan!=null">
+            updateMan_id=#{recentUpdateMan.id},
+        </if>
+        <if test="recentUpdateTime!=null">
+            recentUpdateTime=#{recentUpdateTime}
+        </if>
+
+    where id = #{id}
+  </update>
+  <select id="select" resultType="com.student.crm.domain.ContractManage" parameterType="long" >
+    select * from contractManage where id = #{id}
+  </select>
+  <select id="selectAll" resultType="com.student.crm.domain.ContractManage" >
+    select * from contractManage
+  </select>
+  <sql id="base_where">
+  	<where>
+        <if test="beginDate!=null and beginDate!=''">
+           bill.signTime >=#{beginDate}
+        </if>
+        <if test="endDate!=null and endDate!=''">
+           and bill.signTime &lt;=#{endDate}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and ( sale.realname like concat('%',#{keyword},'%') or e.realname like concat('%',#{keyword},'%')  )
+        </if>
+        <if test="state!=null ">
+            and bill.state=#{state}
+        </if>
+  	</where>
+  </sql>
+  <select id="queryPageCount" resultType="long">
+  	select count(bill.id) from contractManage bill
+      LEFT JOIN employee e ON e.id=bill.updateMan_id
+      LEFT JOIN employee sale ON sale.id=bill.saleman_id
+      LEFT JOIN bigclient client ON client.id=bill.client_id
+  	<include refid="base_where"/>
+  </select>
+  <select id="queryPageData" resultMap="BaseResultMap">
+      SELECT
+      e.id as update_id,e.realname update_realname,
+      sale.id as sale_id,sale.realname sale_realname,
+      client.id as client_id,client.name client_name,
+      bill.state,bill.accessory,bill.mark,bill.signTime,bill.totalamount,
+      bill.orderamount,bill.recentUpdateTime,bill.id,bill.contractsn
+      FROM contractManage bill
+      LEFT JOIN employee e ON e.id=bill.updateMan_id
+      LEFT JOIN employee sale ON sale.id=bill.saleman_id
+      LEFT JOIN potentialcustom client ON client.id=bill.client_id
+  	<include refid="base_where"/>
+  	limit #{start},#{rows}
+  </select>
+</mapper>

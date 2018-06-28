@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.LinkmanMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.Linkman">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="job" property="job" jdbcType="VARCHAR"/>
+        <result column="call" property="call" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="qq" property="qq" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="main" property="main" jdbcType="BIT"/>
+        <result column="institute" property="institute" jdbcType="VARCHAR"/>
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="birthday" property="birthday" jdbcType="DATE"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="intro" property="intro" jdbcType="VARCHAR"/>
+        <association property="school" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="sc_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="linkManStatus" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="lk_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from linkman
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.student.crm.domain.Linkman" useGeneratedKeys="true" keyProperty="id">
+    insert into linkman (name, school_id, job, 
+      `call`, phone, qq, email,
+      linkmanstatus_id, main, institute,
+      department, sex, birthday, 
+      address, intro)
+    values (#{name,jdbcType=VARCHAR}, #{school.id}, #{job,jdbcType=VARCHAR}, 
+      #{call,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{linkManStatus.id,jdbcType=BIGINT}, #{main,jdbcType=BIT}, #{institute,jdbcType=VARCHAR}, 
+      #{department,jdbcType=VARCHAR}, #{sex,jdbcType=TINYINT}, #{birthday,jdbcType=DATE}, 
+      #{address,jdbcType=VARCHAR}, #{intro,jdbcType=VARCHAR})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Linkman">
+    update linkman
+    set name = #{name,jdbcType=VARCHAR},
+      school_id = #{school.id,jdbcType=BIGINT},
+      job = #{job,jdbcType=VARCHAR},
+      `call` = #{call,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      qq = #{qq,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      linkmanstatus_id = #{linkManStatus.id,jdbcType=BIGINT},
+      main = #{main,jdbcType=BIT},
+      institute = #{institute,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=TINYINT},
+      birthday = #{birthday,jdbcType=DATE},
+      address = #{address,jdbcType=VARCHAR},
+      intro = #{intro,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, name, school_id, job, call, phone, qq, email, linkmanstauts_id, main, 
+    institute, department, sex, birthday, address, intro
+    from linkman
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, school_id, job, call, phone, qq, email, linkmanstauts_id, main, 
+    institute, department, sex, birthday, address, intro
+    from linkman
+  </select>
+    <sql id="base_select">
+      lm.id,
+          lm.name,
+          lm.job,
+          lm.call,
+          lm.phone,
+          lm.qq,
+          lm.email,
+          lm.main,
+          lm.institute,
+          lm.department,
+          lm.sex,
+          lm.birthday,
+          lm.address,
+          lm.intro,
+          sc.id sc_id,
+          sc.name sc_name,
+          lk.id lk_id,
+          lk.name lk_name
+  </sql>
+    <sql id="base_from">
+        linkman lm
+      LEFT JOIN systemdictionaryitem sc ON lm.school_id = sc.id
+      LEFT JOIN systemdictionaryitem lk ON lm.linkmanstatus_id = lk.id
+  </sql>
+    <sql id="base_where">
+        <where>
+            <if test="keyword!=null">
+                and lm.name like concat("%",#{keyword},"%")
+            </if>
+            <if test="school!=null">
+                and sc.id=#{school}
+            </if>
+            <if test="main!=null">
+                and lm.main=#{main}
+            </if>
+        </where>
+    </sql>
+    <select id="queryCount" resultType="java.lang.Long">
+        SELECT COUNT(lm.id) FROM <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_select"/>
+        FROM
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+        limit #{start},#{rows}
+    </select>
+</mapper>

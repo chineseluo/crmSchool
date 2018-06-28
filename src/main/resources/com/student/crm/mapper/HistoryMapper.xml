@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.HistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.History" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <!--<result column="client" property="client" jdbcType="VARCHAR" />-->
+      <association property="client" javaType="PotentialCustom"  column="client"
+                   select="com.student.crm.mapper.PotentialCustomMapper.selectByPrimaryKey"/>
+    <!--<result column="before_id" property="before" jdbcType="BIGINT" />-->
+      <association property="before" javaType="Employee" column="before_id"
+                   select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+    <!--<result column="after_id" property="after" jdbcType="BIGINT" />-->
+      <association property="after" javaType="Employee" column="after_id"
+                   select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from history
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.History" useGeneratedKeys="true" keyProperty="id" >
+    insert into history (client, date, reason, 
+      before_id, after_id)
+    values (#{client.id}, #{date,jdbcType=TIMESTAMP}, #{reason},
+      #{before.id}, #{after.id})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.History" >
+    update history
+    set client = #{client.id},
+      date = #{date,jdbcType=TIMESTAMP},
+      reason = #{reason},
+      before_id = #{before},
+      after_id = #{after}
+    where id = #{id}
+  </update>
+
+    
+    <sql id="base_where">
+        <where>
+            <if test="begindate != null">
+                and date >= #{begindate}
+            </if>
+            <if test="enddate != null">
+                and date &lt;= #{enddate}
+            </if>
+            <if test="beforeId != null">
+                and before_id = #{beforeId}
+            </if>
+            <if test="afterId !=null">
+                and after_id = #{afterId}
+            </if>
+
+        </where>
+    </sql>
+    
+    
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, client, date, reason, before_id, after_id
+    from history
+    where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, client, date, reason, before_id, after_id
+    from history
+  </select>
+
+    <select id="queryCount" resultType="java.lang.Long">
+        SELECT count(id) FROM history
+        <include refid="base_where"/>
+
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        select id, client, date, reason, before_id, after_id
+        from history
+        <include refid="base_where"/>
+    </select>
+
+</mapper>

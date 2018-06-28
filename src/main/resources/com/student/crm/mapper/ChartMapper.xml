@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ChartMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Chart" >
+    <id column="id" property="id"  />
+	<result column="totalAmount" property="totalAmount"  />
+	<result column="totalNumber" property="totalNumber"  />
+	<result column="groupType" property="groupType"  />
+  </resultMap>
+
+
+  <sql id="groupByconditionPay">
+
+        <if test="groupbyCon==1">
+            e.realname
+        </if>
+        <if test="groupbyCon==2">
+            way.name
+        </if>
+        <if test="groupbyCon==3">
+            DATE_FORMAT(paydate,'%Y')
+        </if>
+        <if test="groupbyCon==4">
+            DATE_FORMAT(paydate,'%Y-%m')
+        </if>
+
+  </sql>
+
+  <sql id="groupByconditionCharge">
+
+        <if test="groupbyCon==1">
+            e.realname
+        </if>
+        <if test="groupbyCon==2">
+            sub.name
+        </if>
+        <if test="groupbyCon==3">
+            DATE_FORMAT(chargedate,'%Y')
+        </if>
+        <if test="groupbyCon==4">
+            DATE_FORMAT(chargedate,'%Y-%m')
+        </if>
+
+  </sql>
+
+    <sql id="groupByconditioncustom">
+
+        <if test="groupbyCon==1">
+            subj.name
+        </if>
+        <if test="groupbyCon==2">
+            scource.name
+        </if>
+        <if test="groupbyCon==3">
+            edu.name
+        </if>
+        <if test="groupbyCon==4">
+            intention.name
+        </if>
+    </sql>
+
+  <select id="payChartQuery" resultMap="BaseResultMap">
+      SELECT  <include refid="groupByconditionPay"/> as groupType,
+       sum(p.paymoney) as totalAmount
+      FROM pay p
+          LEFT JOIN employee e ON e.id=p.cashier_id
+          LEFT JOIN systemdictionaryitem way ON way.id=p.paymode_id
+      GROUP BY <include refid="groupByconditionPay"/>
+  </select>
+
+  <select id="chargeChartQuery" resultMap="BaseResultMap">
+      SELECT <include refid="groupByconditionCharge"/> AS groupType,sum(c.chargemoney) totalAmount
+      FROM charge c
+      LEFT JOIN employee e ON e.id=c.marketing_id
+      LEFT JOIN systemdictionaryitem sub ON sub.id=c.subject_id
+      GROUP BY <include refid="groupByconditionCharge"/>
+  </select>
+
+
+
+  <select id="customChartQuery" resultMap="BaseResultMap">
+      SELECT <include refid="groupByconditioncustom"/> as groupType,sum(p.id) totalNumber
+      FROM potentialcustom p
+      LEFT JOIN systemdictionaryitem  subj ON subj.id=p.intentionSubject_id
+      LEFT JOIN systemdictionaryitem  scource ON scource.id=p.source_id
+      LEFT JOIN systemdictionaryitem  edu ON edu.id=p.source_id
+      LEFT JOIN systemdictionaryitem  intention ON intention.id=p.intentionLevel_id
+
+      GROUP BY <include refid="groupByconditioncustom"/>
+  </select>
+</mapper>
+
+

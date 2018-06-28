@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ChargeMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.Charge">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="chargeDate" property="chargeDate" jdbcType="DATE"/>
+        <result column="chargeMoney" property="chargeMoney" jdbcType="DECIMAL"/>
+        <result column="billNumber" property="billNumber" jdbcType="VARCHAR"/>
+        <result column="ticket" property="ticket" jdbcType="BIT"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="classChange" property="classChange" jdbcType="VARCHAR"/>
+        <association property="student" javaType="com.student.crm.domain.PotentialCustom" columnPrefix="p_"
+                     resultMap="com.student.crm.mapper.PotentialCustomMapper.BaseResultMap"/>
+        <association property="classroom" javaType="com.student.crm.domain.Classroom" columnPrefix="cr_"
+                     resultMap="com.student.crm.mapper.ClassroomMapper.BaseResultMap"/>
+        <association property="payee" javaType="com.student.crm.domain.Employee" columnPrefix="py_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+        <association property="chargeType" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="ct_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="subject" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="sj_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="marketing" javaType="com.student.crm.domain.Employee" columnPrefix="mk_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from charge
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.student.crm.domain.Charge" useGeneratedKeys="true" keyProperty="id">
+    insert into charge (student_id, chargeDate, chargeMoney, 
+      classroom_id, payee_id, chargeType,
+      billNumber, ticket, subject_id, 
+      remark, marketing_id, classChange
+      )
+    values (#{student.id,jdbcType=BIGINT}, #{chargeDate,jdbcType=DATE}, #{chargeMoney,jdbcType=DECIMAL}, 
+      #{classroom.id,jdbcType=BIGINT}, #{payee.id,jdbcType=BIGINT}, #{chargeType.id,jdbcType=BIGINT}, 
+      #{billNumber,jdbcType=VARCHAR}, #{ticket,jdbcType=BIT}, #{subject.id,jdbcType=BIGINT}, 
+      #{remark,jdbcType=VARCHAR}, #{marketing.id,jdbcType=BIGINT}, #{classChange,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Charge">
+    update charge
+    set student_id = #{student.id,jdbcType=BIGINT},
+      chargeDate = #{chargeDate,jdbcType=DATE},
+      chargeMoney = #{chargeMoney,jdbcType=DECIMAL},
+      classroom_id = #{classroom.id,jdbcType=BIGINT},
+      payee_id = #{payee.id,jdbcType=BIGINT},
+      chargeType = #{chargeType.id,jdbcType=BIGINT},
+      billNumber = #{billNumber,jdbcType=VARCHAR},
+      ticket = #{ticket,jdbcType=BIT},
+      subject_id = #{subject.id,jdbcType=BIGINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      marketing_id = #{marketing.id,jdbcType=BIGINT},
+      classChange = #{classChange,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, student_id, chargeDate, chargeMoney, classroom_id, payee_id, chargeType,
+    billNumber, ticket, subject_id, remark, marketing_id, classChange
+    from charge
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, student_id, chargeDate, chargeMoney, classroom_id, payee_id, chargeType,
+    billNumber, ticket, subject_id, remark, marketing_id, classChange
+    from charge
+  </select>
+    <sql id="base_select">
+          c.id,
+            c.chargeDate,
+            c.chargeMoney,
+            c.billNumber,
+            c.ticket,
+            c.remark,
+            c.classChange,
+            p.id p_id,
+            p.name p_name,
+            cr.id cr_id,
+            cr.name cr_name,
+            py.id py_id,
+            py.username py_username,
+            ct.id ct_id,
+            ct.name ct_name,
+            sj.id sj_id,
+            sj.name sj_name,
+            mk.id mk_id,
+            mk.username mk_username
+  </sql>
+    <sql id="base_from">
+         charge c
+        LEFT JOIN potentialcustom p ON c.student_id = p.id
+        LEFT JOIN classroom cr ON c.classroom_id = cr.id
+        LEFT JOIN employee py ON c.payee_id = py.id
+        LEFT JOIN systemdictionaryitem ct ON c.chargetype = ct.id
+        LEFT JOIN systemdictionaryitem sj ON c.subject_id = sj.id
+        LEFT JOIN employee mk ON c.marketing_id = mk.id
+  </sql>
+    <sql id="base_where">
+        <where>
+            <if test="studentId!=null">
+                and p.id =#{studentId}
+            </if>
+            <if test="chargeDate!=null">
+                and c.chargeDate=#{chargeDate}
+            </if>
+            <if test="chargeMoney!=null">
+                and c.chargeMoney=#{chargeMoney}
+            </if>
+            <if test="classroomId!=null">
+                and cr.id=#{classroomId}
+            </if>
+            <if test="payeeId!=null">
+                and py.id=#{payeeId}
+            </if>
+            <if test="subjectId!=null">
+                and sj.id=#{subjectId}
+            </if>
+        </where>
+    </sql>
+    <select id="queryCount" resultType="java.lang.Long">
+        select count(c.id) from
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_select"/>
+        FROM
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+        limit #{start},#{rows}
+    </select>
+</mapper>

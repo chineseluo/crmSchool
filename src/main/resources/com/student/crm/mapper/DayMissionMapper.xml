@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.DayMissionMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.DayMission">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="missionTime" property="missionTime" jdbcType="DATE"/>
+        <result column="missionInfo" property="missionInfo" jdbcType="VARCHAR"/>
+        <result column="handlerInfo" property="handlerInfo" jdbcType="VARCHAR"/>
+        <result column="missionStatus" property="missionStatus" jdbcType="TINYINT"/>
+        <association property="executor" javaType="com.student.crm.domain.Employee" columnPrefix="ex_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+        <association property="manager" javaType="com.student.crm.domain.Employee" columnPrefix="mg_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from daymission
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.student.crm.domain.DayMission" useGeneratedKeys="true" keyProperty="id">
+    insert into daymission (missionTime, executor_id, missionInfo, 
+      handlerInfo, missionStatus, manager_id
+      )
+    values (#{missionTime,jdbcType=DATE}, #{executor.id,jdbcType=BIGINT}, #{missionInfo,jdbcType=VARCHAR}, 
+      #{handlerInfo,jdbcType=VARCHAR}, #{missionStatus,jdbcType=TINYINT}, #{manager.id,jdbcType=BIGINT}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.DayMission">
+    update daymission
+    set missionTime = #{missionTime,jdbcType=DATE},
+      executor_id = #{executor.id,jdbcType=BIGINT},
+      missionInfo = #{missionInfo,jdbcType=VARCHAR},
+      handlerInfo = #{handlerInfo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateStatusById">
+        update daymission set missionstatus=#{missionStatus} where id=#{id}
+    </update>
+    <update id="selfUpdate">
+      update daymission
+      set handlerInfo = #{handlerInfo,jdbcType=VARCHAR},
+      missionStatus=#{missionStatus}
+      where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, missionTime, executor_id, missionInfo, handlerInfo, missionStatus, manager_id
+    from daymission
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, missionTime, executor_id, missionInfo, handlerInfo, missionStatus, manager_id
+    from daymission
+  </select>
+    <sql id="base_select">
+        dm.id,
+            dm.missionTime,
+            dm.missionInfo,
+            dm.handlerInfo,
+            dm.missionStatus,
+            ex.id ex_id,
+            ex.username ex_username,
+            mg.id mg_id,
+            mg.username mg_username
+  </sql>
+    <sql id="base_from">
+       daymission dm
+        JOIN employee ex ON dm.executor_id = ex.id
+        JOIN employee mg ON dm.manager_id = mg.id
+  </sql>
+    <sql id="base_where">
+        <where>
+            <if test="missionTime!=null">
+                and dm.missionTime=#{missionTime}
+            </if>
+            <if test="executorId!=null">
+                and dm.executor_id=#{executorId}
+            </if>
+            <if test="userId!=null">
+                and ex.id=#{userId}
+            </if>
+            <if test="currentTime!=null">
+                and dm.missionTime=#{currentTime}
+            </if>
+            <if test="missionStatus!=null">
+                and dm.missionStatus=#{missionStatus}
+            </if>
+        </where>
+    </sql>
+    <select id="queryCount" resultType="java.lang.Long">
+        select count(dm.id) from
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_select"/>
+        FROM
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+        limit #{start},#{rows}
+    </select>
+</mapper>

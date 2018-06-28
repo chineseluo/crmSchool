@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.PayMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.Pay">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result property="payDate" column="payDate"/>
+        <result property="payMoney" column="payMoney"/>
+        <result property="info" column="info"/>
+        <result property="billNumber" column="billnumber"/>
+        <result property="shareCost" column="sharecost"/>
+        <result property="auditStatus" column="auditstatus"/>
+        <association property="cashier" javaType="com.student.crm.domain.Employee" columnPrefix="ca_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+        <association property="brokerage" javaType="com.student.crm.domain.Employee" columnPrefix="br_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+        <association property="payMode" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="pm_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="payType" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="pt_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="paySmall" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="ps_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="shareType" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="st_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+        <association property="subject" javaType="com.student.crm.domain.SystemDictionaryItem" columnPrefix="sj_"
+                     resultMap="com.student.crm.mapper.SystemDictionaryItemMapper.BaseResultMap"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from pay
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.student.crm.domain.Pay" useGeneratedKeys="true" keyProperty="id">
+    insert into pay (payDate, payMoney, info, 
+      cashier_id, brokerage_id, paymode_id, 
+      paytype_id, paysmall_id, billnumber, 
+      sharecost, sharetype_id, subject_id, 
+      auditstatus)
+    values (#{payDate,jdbcType=DATE}, #{payMoney,jdbcType=DOUBLE}, #{info,jdbcType=VARCHAR}, 
+      #{cashier.id,jdbcType=BIGINT}, #{brokerage.id,jdbcType=BIGINT}, #{payMode.id,jdbcType=BIGINT}, 
+      #{payType.id,jdbcType=BIGINT}, #{paySmall.id,jdbcType=BIGINT}, #{billNumber,jdbcType=VARCHAR}, 
+      #{shareCost,jdbcType=DECIMAL}, #{shareType.id,jdbcType=BIGINT}, #{subject.id,jdbcType=BIGINT}, 
+      #{auditStatus,jdbcType=TINYINT})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Pay">
+    update pay
+    set payDate = #{payDate,jdbcType=DATE},
+      payMoney = #{payMoney,jdbcType=DOUBLE},
+      info = #{info,jdbcType=VARCHAR},
+      cashier_id = #{cashier.id,jdbcType=BIGINT},
+      brokerage_id = #{brokerage.id,jdbcType=BIGINT},
+      paymode_id = #{payMode.id,jdbcType=BIGINT},
+      paytype_id = #{payType.id,jdbcType=BIGINT},
+      paysmall_id = #{paySmall.id,jdbcType=BIGINT},
+      billnumber = #{billNumber,jdbcType=VARCHAR},
+      sharecost = #{shareCost,jdbcType=DECIMAL},
+      sharetype_id = #{shareType.id},
+      subject_id = #{subject.id}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="audit">
+        update pay set auditstatus=#{status} where id=#{id}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, payDate, payMoney, info, cashier_id, brokerage_id, paymode_id, paytype_id, 
+    paysmall_id, billnumber, sharecost, sharetype_id, subject_id, auditstatus
+    from pay
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+            SELECT
+            p.id,
+            p.payDate,
+            p.payMoney,
+            p.info,
+            p.billnumber,
+            p.sharecost,
+            p.auditstatus,
+            ca.id ca_id,
+            ca.username ca_username,
+            br.id br_id,
+            br.username br_username,
+            pm.id pm_id,
+            pm.name pm_name,
+            pt.id pt_id,
+            pt.name pt_name,
+            ps.id ps_id,
+            ps.name ps_name,
+            st.id st_id,
+            st.name st_name,
+            sj.id sj_id,
+            sj.name sj_name
+        FROM
+            pay p
+        JOIN employee ca ON p.cashier_id = ca.id
+        LEFT JOIN employee br ON p.brokerage_id = br.id
+        LEFT JOIN systemdictionaryitem pm ON p.paymode_id = pm.id
+        LEFT JOIN systemdictionaryitem pt ON p.paytype_id = pt.id
+        LEFT JOIN systemdictionaryitem ps ON p.paysmall_id = ps.id
+        LEFT JOIN systemdictionaryitem st ON p.sharetype_id = st.id
+        LEFT JOIN systemdictionaryitem sj ON p.subject_id = sj.id
+  </select>
+    <sql id="base_select">
+        p.id,
+            p.payDate,
+            p.payMoney,
+            p.info,
+            p.billnumber,
+            p.sharecost,
+            p.auditstatus,
+            ca.id ca_id,
+            ca.username ca_username,
+            br.id br_id,
+            br.username br_username,
+            pm.id pm_id,
+            pm.name pm_name,
+            pt.id pt_id,
+            pt.name pt_name,
+            ps.id ps_id,
+            ps.name ps_name,
+            st.id st_id,
+            st.name st_name,
+            sj.id sj_id,
+            sj.name sj_name
+    </sql>
+    <sql id="base_from">
+        pay p
+        JOIN employee ca ON p.cashier_id = ca.id
+        LEFT JOIN employee br ON p.brokerage_id = br.id
+        LEFT JOIN systemdictionaryitem pm ON p.paymode_id = pm.id
+        LEFT JOIN systemdictionaryitem pt ON p.paytype_id = pt.id
+        LEFT JOIN systemdictionaryitem ps ON p.paysmall_id = ps.id
+        LEFT JOIN systemdictionaryitem st ON p.sharetype_id = st.id
+        LEFT JOIN systemdictionaryitem sj ON p.subject_id = sj.id
+    </sql>
+    <sql id="base_where">
+        <where>
+            <if test="brokerageId!=null">
+                and br.id=#{brokerageId}
+            </if>
+            <if test="cashierId!=null">
+                and ca.id=#{cashierId}
+            </if>
+            <if test="payDate!=null">
+                and p.payDate=#{payDate}
+            </if>
+            <if test="payModeId!=null">
+                and pm.id=#{payModeId}
+            </if>
+            <if test="payMoney!=null">
+                and p.payMoney=#{payMoney}
+            </if>
+            <if test="subjectId!=null">
+                and sj.id=#{subjectId}
+            </if>
+        </where>
+    </sql>
+    <select id="queryCount" resultType="java.lang.Long">
+        select count(p.id) FROM <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_select"/>
+        FROM
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+        limit #{start},#{rows}
+    </select>
+</mapper>

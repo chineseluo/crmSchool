@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.AttendancesheetMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Attendancesheet" >
+    <id column="id" property="id"  />
+	<result column="retroactivetime" property="retroactivetime"  />
+	<result column="state" property="state"  />
+	<result column="signintime" property="signintime"  />
+	<result column="ip" property="ip"  />
+	<result column="signouttime" property="signouttime"  />
+	<result column="latedays" property="latedays"  />
+	<result column="earlyleavedays" property="earlyleavedays"  />
+	<result column="attendancedays" property="attendancedays"  />
+	<association property="employee1" javaType="com.student.crm.domain.Employee">
+	<id column="employee_id" property="id"/>
+	<result column="employee_username" property="username"/>
+	</association>
+	<association property="employee2" javaType="com.student.crm.domain.Employee">
+	<id column="employee_id" property="id"/>
+	<result column="employee_username" property="username"/>
+	</association>
+  </resultMap>
+  <delete id="delete" parameterType="long" >
+    delete from attendancesheet where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.Attendancesheet" useGeneratedKeys="true" keyProperty="id" >
+    insert into attendancesheet 
+    (retroactivetime,state,signintime,employee_id,employee_username,ip, signouttime,latedays,earlyleavedays,attendancedays )
+    values 
+    (#{retroactivetime},#{state},#{signintime},#{employee2.id},#{employee1.username},#{ip},#{signouttime},#{latedays},#{earlyleavedays},#{attendancedays})
+  </insert>
+  <update id="update" parameterType="com.student.crm.domain.Attendancesheet" >
+    update attendancesheet
+    set
+	    retroactivetime=#{retroactivetime},
+	    <!-- state=#{state}, -->
+	    <!-- signintime=#{signintime}, -->
+	    employee_id=#{employee2.id},
+	    <!-- employee_username=#{employee1.username}, -->
+	    ip=#{ip}
+	    <!-- signouttime=#{signouttime} -->
+	    ,earlyleavedays=#{earlyleavedays}
+    where id = #{id}
+  </update>
+  <select id="select" resultMap="BaseResultMap" parameterType="long" >
+    select * from attendancesheet where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select * from attendancesheet
+  </select>
+  <sql id="conditionSql">
+  	<where>
+ 
+  	</where>
+  </sql>
+  <select id="queryPageCount" resultType="long">
+  	select count(id) from attendancesheet
+  	<include refid="conditionSql"/>
+  </select>
+  <select id="queryPageData" resultMap="BaseResultMap">
+  	select * from attendancesheet
+  	<include refid="conditionSql"/>
+  	limit #{start},#{rows}
+  </select>
+    <select id="queryTodaySign" resultType="java.lang.Integer">
+        select count(id) from attendancesheet where signintime>=#{start} and signintime&lt;#{end} and employee_username=#{username}
+    </select>
+    <select id="queryList" resultType="java.util.Map">
+        select date_format(signintime,'%d') signDay,state status from attendancesheet where signintime>=#{start} and signintime&lt;#{end} and employee_username=#{username}
+    </select>
+
+    <!--  <select id="selectattendance" resultType="int" >
+
+     select count(signintime),count(signouttime),employee_username from attendancesheet group by employee_username
+     </select> -->
+  <!-- <select id="selectlate" resultType="int" >
+  
+  select count(signouttime) from attendancesheet where state=1 group by employee_username
+  </select>
+  <select id="selectearlydays" resultType="int" > -->
+  
+<!--   select count(signoutime) from attendancesheet  where state=1 by employee_username
+  </select> -->
+</mapper>

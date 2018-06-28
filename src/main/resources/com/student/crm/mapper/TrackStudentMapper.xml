@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.TrackStudentMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.TrackStudent" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="nextVisitTime" property="nextVisitTime" jdbcType="TIMESTAMP" />
+    <result column="trackAim" property="trackAim" jdbcType="VARCHAR" />
+    <result column="summary" property="summary" jdbcType="VARCHAR" />
+    <result column="consultTime" property="consultTime" jdbcType="BIGINT" />
+    <result column="fileAddress" property="fileAddress" jdbcType="VARCHAR" />
+    <result column="talkContent" property="talkContent" jdbcType="VARCHAR" />
+    <result column="trackTime" property="trackTime" jdbcType="TIMESTAMP" />
+    <!--<result column="consultType_id" property="consultType.id" jdbcType="BIGINT" />-->
+     <association property="consultType" javaType="SystemDictionaryItem" column="consultType_id"
+                  select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+    <!--<result column="talkType_id" property="talkType.id" jdbcType="BIGINT" />-->
+      <association property="talkType" javaType="SystemDictionaryItem" column="talkType_id"
+                   select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+      <!--<result column="schoolLinkMan_id" property="schoolLinkMan.id" jdbcType="BIGINT" />-->
+    <!--<result column="consultPerson_id" property="consultPerson.id" jdbcType="BIGINT" />-->
+      <association property="consultPerson" column="consultPerson_id" javaType="Employee"
+                   select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+    <!--<result column="school_id" property="school.id" jdbcType="BIGINT" />-->
+      <association property="school" javaType="BigClient" column="school_id"
+                   select="com.student.crm.mapper.BigClientMapper.selectByPrimaryKey"/>
+
+
+    <!--<result column="student_id" property="student.id" jdbcType="BIGINT" />-->
+      <association property="student" javaType="PotentialCustom" column="student_id"
+                   select="com.student.crm.mapper.PotentialCustomMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from trackstudent
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+    insert into trackstudent (student_id, nextVisitTime, trackAim, 
+      consultType_id, summary, talkType_id, 
+      consultTime, fileAddress, talkContent, 
+      school_id, schoolLinkMan_id, trackTime, 
+      consultPerson_id)
+    values (#{student.id,jdbcType=BIGINT}, #{nextVisitTime,jdbcType=TIMESTAMP}, #{trackAim,jdbcType=VARCHAR}, 
+      #{consultType.id,jdbcType=BIGINT}, #{summary,jdbcType=VARCHAR}, #{talkType.id,jdbcType=BIGINT}, 
+      #{consultTime,jdbcType=BIGINT}, #{fileAddress,jdbcType=VARCHAR}, #{talkContent,jdbcType=VARCHAR}, 
+      #{school.id,jdbcType=BIGINT}, #{schoolLinkMan.id,jdbcType=BIGINT}, #{trackTime,jdbcType=TIMESTAMP}, 
+      #{consultPerson.id,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.TrackStudent" >
+    update trackstudent
+    set
+      nextVisitTime = #{nextVisitTime,jdbcType=TIMESTAMP},
+      trackAim = #{trackAim,jdbcType=VARCHAR},
+      consultType_id = #{consultType.id,jdbcType=BIGINT},
+      summary = #{summary,jdbcType=VARCHAR},
+      talkType_id = #{talkType.id,jdbcType=BIGINT},
+      consultTime = #{consultTime,jdbcType=BIGINT},
+      fileAddress = #{fileAddress,jdbcType=VARCHAR},
+      talkContent = #{talkContent,jdbcType=VARCHAR},
+      school_id = #{school.id,jdbcType=BIGINT},
+      schoolLinkMan_id = #{schoolLinkMan.id,jdbcType=BIGINT},
+      trackTime = #{trackTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+
+    <sql id="base_select">
+        id, student_id, nextVisitTime, trackAim, consultType_id, summary, talkType_id,
+        consultTime, fileAddress, talkContent, school_id, schoolLinkMan_id, trackTime, consultPerson_id
+    </sql>
+    <sql id="base_from">
+      trackstudent
+    </sql>
+    <sql id="base_where">
+    <where>
+
+    </where>
+    </sql>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="base_select"/>
+    from <include refid="base_from"/>
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+      select <include refid="base_select"/>
+      from <include refid="base_from"/>
+  </select>
+    <select id="queryForCount" resultType="java.lang.Long">
+        select count(id)
+        from <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+    <select id="queryDataList" resultMap="BaseResultMap">
+        select <include refid="base_select"/>
+        from <include refid="base_from"/>
+        <include refid="base_where"/>
+        LIMIT #{start} ,#{rows}
+    </select>
+</mapper>

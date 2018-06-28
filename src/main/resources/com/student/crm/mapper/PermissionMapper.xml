@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Permission" >
+    <id column="id" property="id"  />
+	<result column="resource" property="resource"  />
+	<result column="name" property="name"  />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from permission where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.Permission" useGeneratedKeys="true" keyProperty="id" >
+    insert into permission 
+    (resource,name)
+    values 
+    (#{resource},#{name})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Permission" >
+    update permission
+    set
+	    resource=#{resource},
+	    name=#{name}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select * from permission where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select * from permission
+  </select>
+  <sql id="conditionSql">
+  	<where>
+  	</where>
+  </sql>
+  <select id="queryPageCount" resultType="long">
+  	select count(0) from permission
+  	<include refid="conditionSql"/>
+  </select>
+  <select id="queryPageDataResult" resultMap="BaseResultMap">
+  	select * from permission
+  	<include refid="conditionSql"/>
+  	limit #{start},#{rows}
+  </select>
+  <select id="selectPageForRoleFormByRoleId" resultMap="BaseResultMap">
+  	select id,name from permission where id in ( select permission_id from role_permission where role_id = #{roleId})
+  </select>
+    <select id="queryPermissionsByEmpId" resultType="java.lang.String">
+       select resource from permission where id in (
+           select permission_id from role_permission where role_id in (
+               select role_id from employee_role where employee_id = #{id}
+           )
+       )
+    </select>
+</mapper>

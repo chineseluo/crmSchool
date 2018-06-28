@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.ClassCourseManageMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.ClassCourseManage" >
+    <id column="id" property="id"  />
+	<result column="mark" property="mark"  />
+      <association property="classroom" javaType="com.student.crm.domain.Classroom" columnPrefix="class_" >
+          <result property="id" column="id"/>
+          <result property="name" column="name"/>
+      </association>
+  </resultMap>
+  <delete id="delete" parameterType="long" >
+    delete from classCourseManage where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.ClassCourseManage" useGeneratedKeys="true" keyProperty="id" >
+    insert into classCourseManage 
+    (mark,Classroom_id)
+    values 
+    (#{mark},#{classroom.id})
+  </insert>
+  <update id="update" parameterType="com.student.crm.domain.ClassCourseManage" >
+    update classCourseManage
+    set
+	    mark=#{mark},
+	    classroom_id=#{classroom.id}
+    where id = #{id}
+  </update>
+  <select id="select" resultType="com.student.crm.domain.ClassCourseManage" parameterType="long" >
+    select * from classCourseManage where id = #{id}
+  </select>
+  <select id="selectAll" resultType="com.student.crm.domain.ClassCourseManage" >
+    select * from classCourseManage
+  </select>
+  <sql id="base_where">
+  	<where>
+  	</where>
+  </sql>
+  <select id="queryPageCount" resultType="long">
+  	select count(course.id) from classCourseManage course
+  	<include refid="base_where"/>
+  </select>
+  <select id="queryPageData" resultMap="BaseResultMap">
+  	select course.*,class.name as class_name,class.id as class_id
+      from classCourseManage course
+      LEFT JOIN classroom class ON class.id=course.Classroom_id
+  	<include refid="base_where"/>
+  	limit #{start},#{rows}
+  </select>
+</mapper>

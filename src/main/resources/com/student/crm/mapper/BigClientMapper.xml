@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.BigClientMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.BigClient">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="school" property="school" jdbcType="VARCHAR"/>
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+        <result column="abbreviation_one" property="abbreviationOne" jdbcType="VARCHAR"/>
+        <result column="abbreviation_two" property="abbreviationTwo" jdbcType="VARCHAR"/>
+        <result column="schoolType" property="schoolType" jdbcType="VARCHAR"/>
+        <result column="education" property="education" jdbcType="VARCHAR"/>
+        <result column="region" property="region" jdbcType="VARCHAR"/>
+        <result column="schoolProperties" property="schoolProperties" jdbcType="VARCHAR"/>
+        <result column="createDate" property="createDate" jdbcType="DATE"/>
+        <result column="starLevel" property="starLevel" jdbcType="VARCHAR"/>
+        <result column="deptManage" property="deptManage" jdbcType="VARCHAR"/>
+        <result column="eductionalsystme" property="eductionalsystme" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="postalCode" property="postalCode" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="fax" property="fax" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="homepage" property="homepage" jdbcType="VARCHAR"/>
+        <result column="principal" property="principal" jdbcType="VARCHAR"/>
+        <result column="employeeNumber" property="employeeNumber" jdbcType="INTEGER"/>
+        <result column="teacherNumber" property="teacherNumber" jdbcType="INTEGER"/>
+        <result column="inSchoolNumber" property="inSchoolNumber" jdbcType="INTEGER"/>
+        <result column="itNumber" property="itNumber" jdbcType="INTEGER"/>
+        <result column="cooperationSchool" property="cooperationSchool" jdbcType="VARCHAR"/>
+        <result column="signNumber" property="signNumber" jdbcType="INTEGER"/>
+        <result column="hotspotLevel" property="hotspotLevel"/>
+        <result column="hotspotDescribe" property="hotspotDescribe" jdbcType="VARCHAR"/>
+        <result column="schoolInfo" property="schoolInfo" jdbcType="VARCHAR"/>
+        <association property="marketing" javaType="com.student.crm.domain.Employee" columnPrefix="mk_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+        <association property="follow" javaType="com.student.crm.domain.Employee" columnPrefix="fo_"
+                     resultMap="com.student.crm.mapper.EmployeeMapper.BaseResultMap"/>
+        <collection property="linkman" ofType="com.student.crm.domain.Linkman" columnPrefix="lk_" resultMap="com.student.crm.mapper.LinkmanMapper.BaseResultMap"/>
+        <collection property="trains" ofType="com.student.crm.domain.Train" columnPrefix="tr_" resultMap="com.student.crm.mapper.TrainMapper.BaseResultMap"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from bigclient
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.student.crm.domain.BigClient" useGeneratedKeys="true" keyProperty="id">
+    insert into bigclient (school, department, abbreviation_one, 
+      abbreviation_two, marketing_id, follow_id, 
+      schoolType, education, region, 
+      schoolProperties, createDate, starLevel, 
+      deptManage, eductionalsystme, address, 
+      postalCode, phone, fax, 
+      email, homepage, principal, 
+      employeeNumber, teacherNumber, inSchoolNumber, 
+      itNumber, cooperationSchool, signNumber, 
+      hotspotLevel, hotspotDescribe, schoolInfo
+      )
+    values (#{school,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, #{abbreviationOne,jdbcType=VARCHAR}, 
+      #{abbreviationTwo,jdbcType=VARCHAR}, #{marketing.id,jdbcType=BIGINT}, #{follow.id,jdbcType=BIGINT}, 
+      #{schoolType,jdbcType=VARCHAR}, #{education,jdbcType=VARCHAR}, #{region,jdbcType=VARCHAR}, 
+      #{schoolProperties,jdbcType=VARCHAR}, #{createDate,jdbcType=DATE}, #{starLevel},
+      #{deptManage,jdbcType=VARCHAR}, #{eductionalsystme,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{postalCode,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{fax,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{homepage,jdbcType=VARCHAR}, #{principal,jdbcType=VARCHAR}, 
+      #{employeeNumber,jdbcType=INTEGER}, #{teacherNumber,jdbcType=INTEGER}, #{inSchoolNumber,jdbcType=INTEGER}, 
+      #{itNumber,jdbcType=INTEGER}, #{cooperationSchool,jdbcType=VARCHAR}, #{signNumber,jdbcType=INTEGER}, 
+      #{hotspotLevel}, #{hotspotDescribe,jdbcType=VARCHAR}, #{schoolInfo,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.BigClient">
+    update bigclient
+    set school = #{school,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      abbreviation_one = #{abbreviationOne,jdbcType=VARCHAR},
+      abbreviation_two = #{abbreviationTwo,jdbcType=VARCHAR},
+      marketing_id = #{marketing.id,jdbcType=BIGINT},
+      follow_id = #{follow.id,jdbcType=BIGINT},
+      schoolType = #{schoolType,jdbcType=VARCHAR},
+      education = #{education,jdbcType=VARCHAR},
+      region = #{region,jdbcType=VARCHAR},
+      schoolProperties = #{schoolProperties,jdbcType=VARCHAR},
+      createDate = #{createDate,jdbcType=DATE},
+      starLevel = #{starLevel},
+      deptManage = #{deptManage,jdbcType=VARCHAR},
+      eductionalsystme = #{eductionalsystme,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      postalCode = #{postalCode,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      fax = #{fax,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      homepage = #{homepage,jdbcType=VARCHAR},
+      principal = #{principal,jdbcType=VARCHAR},
+      employeeNumber = #{employeeNumber,jdbcType=INTEGER},
+      teacherNumber = #{teacherNumber,jdbcType=INTEGER},
+      inSchoolNumber = #{inSchoolNumber,jdbcType=INTEGER},
+      itNumber = #{itNumber,jdbcType=INTEGER},
+      cooperationSchool = #{cooperationSchool},
+      signNumber = #{signNumber,jdbcType=INTEGER},
+      hotspotLevel = #{hotspotLevel},
+      hotspotDescribe = #{hotspotDescribe,jdbcType=VARCHAR},
+      schoolInfo = #{schoolInfo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateFollowById">
+        update bigclient set follow_id=#{fId} where id=#{id}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, school, department, abbreviation_one, abbreviation_two, marketing_id, follow_id, 
+    schoolType, education, region, schoolProperties, createDate, starLevel, deptManage, 
+    eductionalsystme, address, postalCode, phone, fax, email, homepage, principal, employeeNumber, 
+    teacherNumber, inSchoolNumber, itNumber, cooperationSchool, signNumber, hotspotLevel, 
+    hotspotDescribe, schoolInfo
+    from bigclient
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, school, department, abbreviation_one, abbreviation_two, marketing_id, follow_id, 
+    schoolType, education, region, schoolProperties, createDate, starLevel, deptManage, 
+    eductionalsystme, address, postalCode, phone, fax, email, homepage, principal, employeeNumber, 
+    teacherNumber, inSchoolNumber, itNumber, cooperationSchool, signNumber, hotspotLevel, 
+    hotspotDescribe, schoolInfo
+    from bigclient
+  </select>
+    <sql id="base_select">
+          b.id,
+          b.school,
+          b.department,
+          b.abbreviation_one,
+          b.abbreviation_two,
+          b.schoolType,
+          b.education,
+          b.region,
+          b.schoolProperties,
+          b.createDate,
+          b.starLevel,
+          b.deptManage,
+          b.eductionalsystme,
+          b.address,
+          b.postalCode,
+          b.phone,
+          b.fax,
+          b.email,
+          b.homepage,
+          b.principal,
+          b.employeeNumber,
+          b.teacherNumber,
+          b.inSchoolNumber,
+          b.itNumber,
+          b.cooperationSchool,
+          b.signNumber,
+          b.hotspotLevel,
+          b.hotspotDescribe,
+          b.schoolInfo,
+          mk.id mk_id,
+          mk.username mk_username,
+          fo.id fo_id,
+          fo.username fo_username,
+          lk.id lk_id,
+          lk.name lk_name,
+          tr.id tr_id
+  </sql>
+    <sql id="base_from">
+                bigclient b
+      LEFT JOIN employee mk ON b.marketing_id = mk.id
+      LEFT JOIN employee fo ON b.follow_id = fo.id
+      LEFT JOIN systemdictionaryitem sc on b.school=sc.name
+      LEFT JOIN linkman lk ON sc.id=lk.school_id
+      LEFT JOIN train tr on b.id=tr.bigclient_id
+    </sql>
+    <sql id="base_where">
+        <where>
+            <if test="school!=null">
+                and b.school=#{school}
+            </if>
+            <if test="marketing!=null">
+                and mk.id=#{marketing}
+            </if>
+            <if test="schoolType!=null">
+                and b.schoolType=#{schoolType}
+            </if>
+            <if test="starLevel!=null">
+                and b.starLevel=#{starLevel}
+            </if>
+        </where>
+    </sql>
+    <select id="queryCount" resultType="java.lang.Long">
+        SELECT COUNT(b.id) FROM <include refid="base_from"/>
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_select"/>
+        FROM
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+        limit #{start},#{rows}
+    </select>
+</mapper>

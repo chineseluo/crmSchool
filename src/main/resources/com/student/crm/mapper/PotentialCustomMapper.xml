@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.PotentialCustomMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.PotentialCustom">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="weChat" property="weChat" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="buildFileTime" property="buildFileTime" jdbcType="TIMESTAMP"/>
+        <result column="inputTime" property="inputTime" jdbcType="TIMESTAMP"/>
+        <result column="vistitTime" property="vistitTime" jdbcType="TIMESTAMP"/>
+        <result property="inform" column="inform"/>
+        <result column="collegeEnrolTime" property="collegeEnrolTime" jdbcType="TIMESTAMP"/>
+        <result column="careQuestion" property="careQuestion" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+
+        <result column="qq" property="qq" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender"/>
+        <result column="schoolOrTrainOrganization" property="schoolOrTrainOrganization" jdbcType="VARCHAR"/>
+        <result column="profession" property="profession" jdbcType="VARCHAR"/>
+
+        <result column="collegeClass" property="collegeClass" jdbcType="VARCHAR"/>
+
+        <result column="nextFollowUpTime" property="nextFollowUpTime" jdbcType="TIMESTAMP"/>
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+
+        <result column="introducer" property="introducer" jdbcType="VARCHAR"/>
+        <result column="bringComputer" property="bringComputer" jdbcType="BIT"/>
+        <result column="zeroPay" property="zeroPay" jdbcType="BIT"/>
+
+        <result column="currentHouseAddress" property="currentHouseAddress" jdbcType="VARCHAR"/>
+        <result column="familyAddress" property="familyAddress" jdbcType="VARCHAR"/>
+        <result column="registeredAddress" property="registeredAddress" jdbcType="VARCHAR"/>
+        <result column="otherLevel" property="otherLevel" jdbcType="VARCHAR"/>
+        <result column="trainStartTime" property="trainStartTime" jdbcType="TIMESTAMP"/>
+
+        <result column="planTuition" property="planTuition" jdbcType="DECIMAL"/>
+        <result column="trainTuition" property="trainTuition" jdbcType="DECIMAL"/>
+        <result column="discountInstruction" property="discountInstruction" jdbcType="VARCHAR"/>
+        <result column="defraiedTuition" property="defraiedTuition" jdbcType="DECIMAL"/>
+        <result column="previousUrgeTime" property="previousUrgeTime" jdbcType="TIMESTAMP"/>
+        <result column="completePay" property="completePay" jdbcType="BIT"/>
+        <result column="otherTuition" property="otherTuition" jdbcType="DECIMAL"/>
+        <result column="totalTuition" property="totalTuition" jdbcType="DECIMAL"/>
+        <result column="dueTuition" property="dueTuition" jdbcType="DECIMAL"/>
+        <result column="nextUrgeTime" property="nextUrgeTime" jdbcType="TIMESTAMP"/>
+        <result column="discountAmount" property="discountAmount" jdbcType="DECIMAL"/>
+        <result column="otherDiscount" property="otherDiscount" jdbcType="DECIMAL"/>
+        <result column="marketStream" property="marketStream" jdbcType="VARCHAR"/>
+        <result column="finalPayTime" property="finalPayTime" jdbcType="TIMESTAMP"/>
+        <result column="urgePayTimes" property="urgePayTimes" jdbcType="INTEGER"/>
+        <result column="headPortrait" property="headPortrait" jdbcType="VARCHAR"/>
+        <result column="idCardNumber" property="idCardNumber" jdbcType="VARCHAR"/>
+        <result column="urgentLinkMan" property="urgentLinkMan" jdbcType="VARCHAR"/>
+        <result column="urgentTelephone" property="urgentTelephone" jdbcType="VARCHAR"/>
+        <result column="idCardCopies" property="idCardCopies" jdbcType="VARCHAR"/>
+        <result column="degreeCertificateCopies" property="degreeCertificateCopies" jdbcType="VARCHAR"/>
+        <result column="workExperience" property="workExperience" jdbcType="VARCHAR"/>
+        <result property="studentState" column="studentState_id"/>
+
+        <result column="enrolTime" property="enrolTime" jdbcType="TIMESTAMP"/>
+
+        <result column="lossTime" property="lossTime" jdbcType="TIMESTAMP"/>
+        <result column="fatalisminSchool" property="fatalisminSchool" jdbcType="BIGINT"/>
+        <result column="losssTage" property="losssTage" jdbcType="VARCHAR"/>
+        <result column="lossCause" property="lossCause" jdbcType="VARCHAR"/>
+
+        <result column="refundment" property="refundment" jdbcType="BIT"/>
+
+
+        <!--处理表直接的关系-->
+
+        <!--字典中的关系的维护-->
+        <!--<result column="education_id" property="education" jdbcType="BIGINT" />-->
+        <association property="education" javaType="SystemDictionaryItem" column="education_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+        <!--<result column="workYear_id" property="workyear.id" jdbcType="BIGINT" />-->
+        <association property="workYear" javaType="SystemDictionaryItem" column="workYear_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+        <!--<result column="intentionClass_id" property="intentionclass.id" jdbcType="BIGINT" />-->
+        <association property="intentionClass" javaType="Classroom" column="intentionClass_id"
+                     select="com.student.crm.mapper.ClassroomMapper.selectByPrimaryKey"/>
+
+        <!--<result column="clientType_id" property="clienttype.id" jdbcType="BIGINT" />-->
+        <association property="clientType" javaType="SystemDictionaryItem" column="clientType_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--没处理-->
+
+        <!--<result column="studentState_id" property="studentstate.id" jdbcType="BIGINT" />-->
+        <!--<association property="studentState" javaType="SystemDictionaryItem" column="studentState_id"-->
+        <!--seleSystemDictionaryItemMapperpper.selectByPrimaryKey"/>-->
+        <!--<result column="paystate_id" property="paystate.id" jdbcType="BIGINT" />-->
+        <association property="payState" javaType="SystemDictionaryItem" column="paystate_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+
+        <!--没处理-->
+        <!--<result column="inform" property="inform.id" jdbcType="BIGINT" />-->
+        <!--<association property="inform" javaType="SystemDictionaryItem" column="inform"
+                     seleSystemDictionaryItemMapperpper.selectByPrimaryKey"/>-->
+        <!--<result column="discountWay_id" property="discountway.id" jdbcType="BIGINT" />-->
+        <association property="discountWay" javaType="SystemDictionaryItem" column="discountWay_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+        <!--<result column="intentionSubject_id" property="intentionsubject.id" jdbcType="BIGINT" />-->
+        <association property="intentionSubject" javaType="SystemDictionaryItem" column="intentionSubject_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--<result column="intentionSchoolRegion_id" property="intentionschoolregion.id" jdbcType="BIGINT" />-->
+        <association property="intentionSchoolRegion" javaType="SystemDictionaryItem" column="intentionSchoolRegion_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--<result column="source_id" property="source.id" jdbcType="BIGINT" />-->
+        <association property="source" javaType="SystemDictionaryItem" column="source_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+
+        <!--<result column="intentionLevel_id" property="intentionlevel.id" jdbcType="BIGINT" />-->
+        <association property="intentionLevel" javaType="SystemDictionaryItem" column="intentionLevel_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--<result column="region_id" property="region.id" jdbcType="BIGINT" />-->
+        <association property="region" javaType="SystemDictionaryItem" column="region_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--<result column="currentState_id" property="currentstate.id" jdbcType="BIGINT" />-->
+        <association property="currentState" javaType="SystemDictionaryItem" column="currentState_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--<result column="collegeEnglishTest_id" property="collegeenglishtest.id" jdbcType="BIGINT" />-->
+        <association property="collegeEnglishTest" javaType="SystemDictionaryItem" column="collegeEnglishTest_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+        <!--<result column="payWay_id" property="payway.id" jdbcType="BIGINT" />-->
+        <association property="payWay" javaType="SystemDictionaryItem" column="payWay_id"
+                     select="com.student.crm.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+
+
+        <!--非systemdictionaryitem中的关系-->
+        <!--<result column="selectClass_id" property="selectclass.id" jdbcType="BIGINT" />-->
+        <association property="selectClass" javaType="Classroom" column="selectClass_id"
+                     select="com.student.crm.mapper.ClassroomMapper.selectByPrimaryKey"/>
+
+        <!--<result column="currentclass_id" property="currentclass.id" jdbcType="BIGINT" />-->
+        <association property="currentClass" javaType="Classroom" column="currentclass_id"
+                     select="com.student.crm.mapper.ClassroomMapper.selectByPrimaryKey"/>
+        <!--<result column="beforeclass_id" property="currentclass.id" jdbcType="BIGINT" />-->
+        <association property="beforeClass" javaType="Classroom" column="beforeclass_id"
+                     select="com.student.crm.mapper.ClassroomMapper.selectByPrimaryKey"/>
+
+        <!--<result column="handlerPerson_id" property="handlerperson.id" jdbcType="BIGINT" />-->
+        <association property="handlerPerson" javaType="Employee" column="handlerPerson_id"
+                     select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+
+        <!--<result column="marketingMan_id" property="marketingman.id" jdbcType="BIGINT" />-->
+        <association property="marketingMan" javaType="Employee" column="marketingMan_id"
+                     select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+        <!--<result column="otherMarketingMan_id" property="othermarketingman.id" jdbcType="BIGINT" />-->
+        <association property="otherMarketingMan" javaType="Employee" column="otherMarketingMan_id"
+                     select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+
+        <!--<result column="inputMan_id" property="inputMan.id" jdbcType="BIGINT" />-->
+        <association property="inputMan" javaType="Employee" column="inputMan_id"
+                     select="com.student.crm.mapper.EmployeeMapper.selectByPrimaryKey"/>
+
+        <!-- 等着大客户中的数据的完成
+        &lt;!&ndash;<result column="schoolClient_id" property="schoolclient.id" jdbcType="BIGINT" />&ndash;&gt;-->
+        <association property="schoolClient" javaType="BigClient" column="schoolClient_id"
+                     select="com.student.crm.mapper.BigClientMapper.selectByPrimaryKey"/>
+
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from potentialcustom
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into potentialcustom (name, age, weChat, 
+      address, buildFileTime, inputTime, 
+      vistitTime, education_id, workYear_id, 
+      intentionClass_id, clientType_id, collegeEnrolTime, 
+      intentionSubject_id, careQuestion, remark, 
+      marketingMan_id, intentionSchoolRegion_id, 
+      source_id, qq, gender, 
+      schoolOrTrainOrganization, profession, 
+      intentionLevel_id, otherMarketingMan_id, collegeClass, 
+      inputMan_id, nextFollowUpTime, telephone, 
+      email, schoolClient_id, region_id, 
+      introducer, currentState_id, bringComputer, 
+      zeroPay, collegeEnglishTest_id, payWay_id, 
+      currentHouseAddress, familyAddress, registeredAddress, 
+      otherLevel, trainStartTime, selectClass_id, 
+      planTuition, trainTuition, discountInstruction, 
+      defraiedTuition, previousUrgeTime, completePay, 
+      discountWay_id, otherTuition, totalTuition, 
+      dueTuition, nextUrgeTime, discountAmount, 
+      otherDiscount, marketStream, finalPayTime, 
+      urgePayTimes, headPortrait, idCardNumber, 
+      urgentLinkMan, urgentTelephone, idCardCopies, 
+      degreeCertificateCopies, workExperience, 
+      currentclass_id, beforeclass_id, flowclass_id, 
+      studentState_id, paystate_id, enrolTime, 
+      inform, lossTime, fatalisminSchool, 
+      losssTage, lossCause, handlerPerson_id, 
+      refundment)
+    values (#{name,jdbcType=VARCHAR}, #{age}, #{weChat,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{buildFileTime,jdbcType=TIMESTAMP}, #{inputTime,jdbcType=TIMESTAMP},
+      #{vistitTime,jdbcType=TIMESTAMP}, #{education.id,jdbcType=BIGINT}, #{workYear.id,jdbcType=BIGINT},
+      #{intentionClass.id,jdbcType=BIGINT}, #{clientType.id,jdbcType=BIGINT}, #{collegeEnrolTime,jdbcType=TIMESTAMP},
+      #{intentionSubject.id,jdbcType=BIGINT}, #{careQuestion,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+      #{marketingMan.id,jdbcType=BIGINT}, #{intentionSchoolRegion.id,jdbcType=BIGINT},
+      #{source.id,jdbcType=BIGINT}, #{qq,jdbcType=VARCHAR}, #{gender}, 
+      #{schoolOrTrainOrganization,jdbcType=VARCHAR}, #{profession,jdbcType=VARCHAR}, 
+      #{intentionLevel.id,jdbcType=BIGINT}, #{otherMarketingMan.id}, #{collegeClass,jdbcType=VARCHAR},
+      #{inputMan.id,jdbcType=BIGINT}, #{nextFollowUpTime,jdbcType=TIMESTAMP}, #{telephone,jdbcType=VARCHAR},
+      #{email,jdbcType=VARCHAR}, #{schoolClient.id,jdbcType=BIGINT}, #{region.id,jdbcType=BIGINT},
+      #{introducer,jdbcType=VARCHAR}, #{currentState.id,jdbcType=BIGINT}, #{bringComputer,jdbcType=BIT},
+      #{zeroPay,jdbcType=BIT}, #{collegeEnglishTest.id,jdbcType=BIGINT}, #{payWay.id,jdbcType=BIGINT},
+      #{currentHouseAddress,jdbcType=VARCHAR}, #{familyAddress,jdbcType=VARCHAR}, #{registeredAddress,jdbcType=VARCHAR}, 
+      #{otherLevel,jdbcType=VARCHAR}, #{trainStartTime,jdbcType=TIMESTAMP}, #{selectClass.id,jdbcType=BIGINT},
+      #{planTuition,jdbcType=DECIMAL}, #{trainTuition,jdbcType=DECIMAL}, #{discountInstruction,jdbcType=VARCHAR}, 
+      #{defraiedTuition,jdbcType=DECIMAL}, #{previousUrgeTime,jdbcType=TIMESTAMP}, #{completePay,jdbcType=BIT}, 
+      #{discountWay.id,jdbcType=BIGINT}, #{otherTuition,jdbcType=DECIMAL}, #{totalTuition,jdbcType=DECIMAL},
+      #{dueTuition,jdbcType=DECIMAL}, #{nextUrgeTime,jdbcType=TIMESTAMP}, #{discountAmount,jdbcType=DECIMAL}, 
+      #{otherDiscount,jdbcType=DECIMAL}, #{marketStream,jdbcType=VARCHAR}, #{finalPayTime,jdbcType=TIMESTAMP}, 
+      #{urgePayTimes}, #{headPortrait,jdbcType=VARCHAR}, #{idCardNumber,jdbcType=VARCHAR}, 
+      #{urgentLinkMan,jdbcType=VARCHAR}, #{urgentTelephone,jdbcType=VARCHAR}, #{idCardCopies,jdbcType=VARCHAR}, 
+      #{degreeCertificateCopies,jdbcType=VARCHAR}, #{workExperience,jdbcType=VARCHAR}, 
+      #{currentClass.id,jdbcType=BIGINT}, #{beforeClass.id,jdbcType=BIGINT}, #{flowClass.id,jdbcType=BIGINT},
+      #{studentState,jdbcType=BIGINT}, #{payState.id,jdbcType=BIGINT}, #{enrolTime,jdbcType=TIMESTAMP},
+      #{inform,jdbcType=BIGINT}, #{lossTime,jdbcType=TIMESTAMP}, #{fatalisminSchool,jdbcType=BIGINT},
+      #{losssTage,jdbcType=VARCHAR}, #{lossCause,jdbcType=VARCHAR}, #{handlerPerson.id,jdbcType=BIGINT},
+      #{refundment,jdbcType=BIT})
+  </insert>
+    <update id="updateByPrimaryKey">
+    update potentialcustom
+    set
+        name = #{name,jdbcType=VARCHAR},
+        age = #{age},
+        weChat = #{weChat,jdbcType=VARCHAR},
+        address = #{address,jdbcType=VARCHAR},
+        buildFileTime = #{buildFileTime,jdbcType=TIMESTAMP},
+        inputTime = #{inputTime,jdbcType=TIMESTAMP},
+        vistitTime = #{vistitTime,jdbcType=TIMESTAMP},
+      education_id = #{education.id,jdbcType=BIGINT},
+      workYear_id = #{workYear.id,jdbcType=BIGINT},
+      intentionClass_id = #{intentionClass.id,jdbcType=BIGINT},
+      clientType_id = #{clientType.id,jdbcType=BIGINT},
+      collegeEnrolTime = #{collegeEnrolTime,jdbcType=TIMESTAMP},
+      intentionSubject_id = #{intentionSubject.id,jdbcType=BIGINT},
+      careQuestion = #{careQuestion,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      marketingMan_id = #{marketingMan.id,jdbcType=BIGINT},
+      intentionSchoolRegion_id = #{intentionSchoolRegion.id,jdbcType=BIGINT},
+      source_id = #{source.id,jdbcType=BIGINT},
+      qq = #{qq,jdbcType=VARCHAR},
+      gender = #{gender},
+      schoolOrTrainOrganization = #{schoolOrTrainOrganization,jdbcType=VARCHAR},
+      profession = #{profession,jdbcType=VARCHAR},
+      intentionLevel_id = #{intentionLevel.id,jdbcType=BIGINT},
+      otherMarketingMan_id = #{otherMarketingMan.id,jdbcType=BIGINT},
+      collegeClass = #{collegeClass,jdbcType=VARCHAR},
+      inputMan_id = #{inputMan.id,jdbcType=BIGINT},
+      nextFollowUpTime = #{nextFollowUpTime,jdbcType=TIMESTAMP},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      schoolClient_id = #{schoolClient.id,jdbcType=BIGINT},
+      region_id = #{region.id,jdbcType=BIGINT},
+      introducer = #{introducer,jdbcType=VARCHAR},
+      currentState_id = #{currentState.id,jdbcType=BIGINT},
+      bringComputer = #{bringComputer,jdbcType=BIT},
+      zeroPay = #{zeroPay,jdbcType=BIT},
+      collegeEnglishTest_id = #{collegeEnglishTest.id,jdbcType=BIGINT},
+      payWay_id = #{payWay.id,jdbcType=BIGINT},
+      currentHouseAddress = #{currentHouseAddress,jdbcType=VARCHAR},
+      familyAddress = #{familyAddress,jdbcType=VARCHAR},
+      registeredAddress = #{registeredAddress,jdbcType=VARCHAR},
+      otherLevel = #{otherLevel,jdbcType=VARCHAR},
+      trainStartTime = #{trainStartTime,jdbcType=TIMESTAMP},
+      selectClass_id = #{selectClass.id,jdbcType=BIGINT},
+      planTuition = #{planTuition,jdbcType=DECIMAL},
+      trainTuition = #{trainTuition,jdbcType=DECIMAL},
+      discountInstruction = #{discountInstruction,jdbcType=VARCHAR},
+      defraiedTuition = #{defraiedTuition,jdbcType=DECIMAL},
+      previousUrgeTime = #{previousUrgeTime,jdbcType=TIMESTAMP},
+      completePay = #{completePay,jdbcType=BIT},
+      discountWay_id = #{discountWay.id,jdbcType=BIGINT},
+      otherTuition = #{otherTuition,jdbcType=DECIMAL},
+      totalTuition = #{totalTuition,jdbcType=DECIMAL},
+      dueTuition = #{dueTuition,jdbcType=DECIMAL},
+      nextUrgeTime = #{nextUrgeTime,jdbcType=TIMESTAMP},
+      discountAmount = #{discountAmount,jdbcType=DECIMAL},
+      otherDiscount = #{otherDiscount,jdbcType=DECIMAL},
+      marketStream = #{marketStream,jdbcType=VARCHAR},
+      finalPayTime = #{finalPayTime,jdbcType=TIMESTAMP},
+      urgePayTimes = #{urgePayTimes},
+      headPortrait = #{headPortrait,jdbcType=VARCHAR},
+      idCardNumber = #{idCardNumber,jdbcType=VARCHAR},
+      urgentLinkMan = #{urgentLinkMan,jdbcType=VARCHAR},
+      urgentTelephone = #{urgentTelephone,jdbcType=VARCHAR},
+      idCardCopies = #{idCardCopies,jdbcType=VARCHAR},
+      degreeCertificateCopies = #{degreeCertificateCopies,jdbcType=VARCHAR},
+      workExperience = #{workExperience,jdbcType=VARCHAR},
+      currentclass_id = #{currentClass.id,jdbcType=BIGINT},
+      beforeclass_id = #{beforeClass.id,jdbcType=BIGINT},
+      flowclass_id = #{flowClass.id,jdbcType=BIGINT},
+      paystate_id = #{payState.id,jdbcType=BIGINT},
+      enrolTime = #{enrolTime,jdbcType=TIMESTAMP},
+      lossTime = #{lossTime,jdbcType=TIMESTAMP},
+      fatalisminSchool = #{fatalisminSchool,jdbcType=BIGINT},
+      losssTage = #{losssTage,jdbcType=VARCHAR},
+      lossCause = #{lossCause,jdbcType=VARCHAR},
+      handlerPerson_id = #{handlerPerson.id,jdbcType=BIGINT},
+      refundment = #{refundment,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <update id="saveFormalStudent" parameterType="PotentialCustom">
+        update potentialcustom
+        set name = #{name,jdbcType=VARCHAR},
+            age = #{age},
+            address = #{address,jdbcType=VARCHAR},
+            education_id = #{education.id,jdbcType=BIGINT},
+            workYear_id = #{workYear.id,jdbcType=BIGINT},
+            clientType_id = #{clientType.id,jdbcType=BIGINT},
+            source_id = #{source.id,jdbcType=BIGINT},
+            qq = #{qq,jdbcType=VARCHAR},
+            gender = #{gender},
+            schoolOrTrainOrganization = #{schoolOrTrainOrganization,jdbcType=VARCHAR},
+            profession = #{profession,jdbcType=VARCHAR},
+            telephone = #{telephone,jdbcType=VARCHAR},
+            email = #{email,jdbcType=VARCHAR},
+            bringComputer = #{bringComputer,jdbcType=BIT},
+            collegeEnglishTest_id = #{collegeEnglishTest.id,jdbcType=BIGINT},
+            payWay_id = #{payWay.id,jdbcType=BIGINT},
+            currentHouseAddress = #{currentHouseAddress,jdbcType=VARCHAR},
+            familyAddress = #{familyAddress,jdbcType=VARCHAR},
+            registeredAddress = #{registeredAddress,jdbcType=VARCHAR},
+            otherLevel = #{otherLevel,jdbcType=VARCHAR},
+            trainStartTime = #{trainStartTime,jdbcType=TIMESTAMP},
+            selectClass_id = #{selectClass.id,jdbcType=BIGINT},
+            planTuition = #{planTuition,jdbcType=DECIMAL},
+            trainTuition = #{trainTuition,jdbcType=DECIMAL},
+            discountInstruction = #{discountInstruction,jdbcType=VARCHAR},
+            defraiedTuition = #{defraiedTuition,jdbcType=DECIMAL},
+            previousUrgeTime = #{previousUrgeTime,jdbcType=TIMESTAMP},
+            completePay = #{completePay,jdbcType=BIT},
+            discountWay_id = #{discountWay.id,jdbcType=BIGINT},
+            otherTuition = #{otherTuition,jdbcType=DECIMAL},
+            totalTuition = #{totalTuition,jdbcType=DECIMAL},
+            dueTuition = #{dueTuition,jdbcType=DECIMAL},
+            nextUrgeTime = #{nextUrgeTime,jdbcType=TIMESTAMP},
+            discountAmount = #{discountAmount,jdbcType=DECIMAL},
+            otherDiscount = #{otherDiscount,jdbcType=DECIMAL},
+            marketStream = #{marketStream,jdbcType=VARCHAR},
+            finalPayTime = #{finalPayTime,jdbcType=TIMESTAMP},
+            urgePayTimes = #{urgePayTimes},
+            urgentLinkMan = #{urgentLinkMan,jdbcType=VARCHAR},
+            studentState_id = #{studentState,jdbcType=BIGINT}
+        where id = #{id}
+
+    </update>
+    <update id="updateByTrackStudent">
+        update potentialcustom
+        <set>
+            <if test="intentionLevel != null">
+                intentionLevel_id = #{intentionLevel.id,jdbcType=BIGINT},
+            </if>
+            <if test="intentionClass != null">
+                intentionClass_id = #{intentionClass.id,jdbcType=BIGINT},
+            </if>
+            <if test="qq != null">
+                qq = #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="currentState != null">
+                currentState_id = #{currentState.id,jdbcType=BIGINT}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="changeCustomToPool">
+        update potentialcustom
+        SET  studentState_id = #{studentState}
+        where id = #{id}
+    </update>
+    <update id="updateMarketingManById">
+        update potentialcustom
+        SET  marketingMan_id = #{marketingMan.id}
+        where id = #{id}
+    </update>
+    <update id="updateCustomState">
+
+    </update>
+    <update id="updateFormalStudent">
+        update potentialcustom
+        set
+
+            trainTuition = #{trainTuition,jdbcType=DECIMAL},
+            defraiedTuition = #{defraiedTuition,jdbcType=DECIMAL},
+            paystate_id = #{payState.id}
+
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateClass">
+        update potentialcustom
+        SET
+            beforeclass_id =#{beforeClass.id},
+            currentclass_id = #{currentClass.id},
+            studentState_id = #{studentState}
+        where id = #{id}
+    </update>
+    <update id="updateStudentStateToLoss">
+        update potentialcustom
+        SET studentState_id = #{studentState},
+            lossTime = #{lossTime}
+        where id = #{id}
+    </update>
+    <update id="payment">
+        UPDATE potentialcustom
+        SET
+            defraiedTuition = #{defraiedTuition},
+            dueTuition = #{dueTuition}
+        WHERE id = #{id}
+    </update>
+    <update id="PotentialCustom">
+        update potentialcustom
+        SET
+            losscause = #{lossCause},
+            losssTage =#{losssTage},
+            fatalisminSchool = #{fatalisminSchool},
+            refundment = #{refundment}
+        where id = #{id}
+    </update>
+    <update id="updateInformById">
+        update potentialcustom set inform=1 where id=#{id}
+    </update>
+
+
+    <!--公共的sql的片段-->
+    <!--抽取的公共的sql片段-->
+    <sql id="base_select">
+        id, name, age, weChat, address, buildFileTime, inputTime, vistitTime, education_id,
+        workYear_id, intentionClass_id, clientType_id, collegeEnrolTime, intentionSubject_id,
+        careQuestion, remark, marketingMan_id, intentionSchoolRegion_id, source_id, qq, gender,
+        schoolOrTrainOrganization, profession, intentionLevel_id, otherMarketingMan_id, collegeClass,
+        inputMan_id, nextFollowUpTime, telephone, email, schoolClient_id, region_id, introducer,
+        currentState_id, bringComputer, zeroPay, collegeEnglishTest_id, payWay_id, currentHouseAddress,
+        familyAddress, registeredAddress, otherLevel, trainStartTime, selectClass_id, planTuition,
+        trainTuition, discountInstruction, defraiedTuition, previousUrgeTime, completePay,
+        discountWay_id, otherTuition, totalTuition, dueTuition, nextUrgeTime, discountAmount,
+        otherDiscount, marketStream, finalPayTime, urgePayTimes, headPortrait, idCardNumber,
+        urgentLinkMan, urgentTelephone, idCardCopies, degreeCertificateCopies, workExperience,
+        currentclass_id, beforeclass_id, flowclass_id, studentState_id, paystate_id, enrolTime,
+        inform,lossTime, fatalisminSchool, losssTage, lossCause, handlerPerson_id, refundment
+    </sql>
+
+    <sql id="base_from">
+        potentialcustom
+    </sql>
+
+    <sql id="base_where">
+        <where>
+
+            <!-- <if test="schoolType!= null">
+                 and schoolType = #{schoolType}
+             </if>
+
+             <if test="intentionGrade!= null">
+                 and intentionGrade =#{intentionGrade}
+             </if>
+
+             <if test="workTime != null">
+                 and workTime =#{workTime}
+             </if>
+
+             <if test=" currentStatu != null">
+                 and currentStatu =#{currentStatu}
+             </if>
+
+             <if test=" intentionMajor != null">
+                 and intentionMajor =#{intentionMajor}
+             </if>
+
+             <if test=" educationRecord != null">
+                 and educationRecord =#{educationRecord}
+             </if>
+
+             <if test=" collegeBeginTimeMin != null">
+                 and collegeBeginTime >= #{collegeBeginTimeMin}
+             </if>
+
+             <if test=" collegeBeginTimeMax != null">
+                 and collegeBeginTime &gt= #{collegeBeginTimeMax}
+             </if>-->
+
+
+
+            <if test="schoolType!= null">
+                and intentionSchoolRegion_id = #{schoolType}
+            </if>
+
+            <if test="intentionGrade!= null">
+                and intentionLevel_id =#{intentionGrade}
+            </if>
+
+            <if test="workTime != null">
+                and workYear_id =#{workTime}
+            </if>
+
+            <if test=" currentStatu != null">
+                and currentState_id =#{currentStatu}
+            </if>
+
+            <if test=" intentionMajor != null">
+                and intentionSubject_id =#{intentionMajor}
+            </if>
+
+            <if test=" educationRecord != null">
+                and education_id =#{educationRecord}
+            </if>
+
+            <if test=" collegeBeginTimeMin != null">
+                and collegeEnrolTime >= #{collegeBeginTimeMin}
+            </if>
+
+            <if test=" collegeBeginTimeMax != null">
+                and collegeEnrolTime &lt;= #{collegeBeginTimeMax}
+            </if>
+
+            <if test="studentState != null">
+                and studentState_id = #{studentState}
+            </if>
+            <if test="formal_studentState != null">
+                and studentState_id >= #{formal_studentState}
+            </if>
+            <if test="upOrDown != null">
+                and ( 2 &lt;= studentState_id and studentState_id &lt;= 3)
+            </if>
+
+
+
+        </where>
+    </sql>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="base_select"/>
+        from
+        <include refid="base_from"/>
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+      select id,name,email from potentialcustom
+  </select>
+
+    <select id="queryPageData" resultMap="BaseResultMap">
+        select
+        <include refid="base_select"/>
+        from
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+        LIMIT #{start} ,#{rows}
+    </select>
+
+    <select id="queryPageCount" resultType="long">
+        select count(id)
+        from
+        <include refid="base_from"/>
+        <include refid="base_where"/>
+    </select>
+
+
+</mapper>

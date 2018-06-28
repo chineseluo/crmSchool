@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.DepartmentMapper" >
+  <resultMap id="BaseResultMap" type="com.student.crm.domain.Department" >
+    <id column="id" property="id"  />
+    <result column="name" property="name"   />
+    <result column="state" property="state"  />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from department where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.student.crm.domain.Department" useGeneratedKeys="true" keyProperty="id" >
+    insert into department (sn, name, state)
+    values (#{sn},#{name},#{state})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.Department" >
+    update department
+    set sn = #{sn},
+    name = #{name},
+    state = #{state}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, name,state
+    from department
+    where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, state
+    from department
+  </select>
+  <select id="queryByCount" resultType="java.lang.Long">
+    SELECT count(*) FROM department
+  </select>
+  <select id="queryPage" resultMap="BaseResultMap">
+    select id, sn, name, state
+    from department
+  </select>
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.student.crm.mapper.NetDiscMapper">
+    <resultMap id="BaseResultMap" type="com.student.crm.domain.NetDisc">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="text" jdbcType="VARCHAR"/>
+        <result column="size" property="size" jdbcType="DOUBLE"/>
+        <result column="uploadTime" property="uploadTime" jdbcType="TIMESTAMP"/>
+        <result column="share" property="share" jdbcType="TINYINT"/>
+        <result property="parentId" column="parentid"/>
+        <result property="shareTime" column="sharetime"/>
+        <association property="type" javaType="Type" columnPrefix="t_"
+                     resultMap="com.student.crm.mapper.TypeMapper.BaseResultMap"/>
+        <association property="user" javaType="Employee">
+            <id property="id" column="userid"/>
+            <result property="username" column="username"/>
+        </association>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from netdisc
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.student.crm.domain.NetDisc" useGeneratedKeys="true" keyProperty="id">
+    insert into netdisc (name, size,
+      uploadTime, userid, share,typeid,
+      parentid)
+    values (#{text}, #{size},
+      #{uploadTime}, #{user.id}, #{share},#{type.id},
+      #{parentId})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.student.crm.domain.NetDisc">
+    update netdisc
+    set name = #{text,jdbcType=VARCHAR},
+      size = #{size,jdbcType=DOUBLE},
+      typeid = #{typeid,jdbcType=BIGINT},
+      uploadTime = #{uploadTime,jdbcType=TIMESTAMP},
+      userid = #{user.id,jdbcType=BIGINT},
+      share = #{share,jdbcType=TINYINT},
+      parentid = #{parentId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="move">
+    update netdisc set parentid=#{pId} where id=#{id}
+  </update>
+    <update id="share">
+    update netdisc set share=#{share},sharetime=#{time} where id=#{id}
+  </update>
+    <update id="updateNameById">
+    update netdisc set name=#{name} where id=#{id}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select n.id, n.name, n.size,n.uploadtime, n.userid, n.share, n.parentid,t.id t_id,t.typename t_typename
+    from netdisc n join type t on n.typeid=t.id
+    where n.id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, size, typeid, uploadTime, userid, share, parentid
+    from netdisc
+  </select>
+    <sql id="base_select">
+
+    </sql>
+    <sql id="base_from">
+
+    </sql>
+    <sql id="base_where">
+        <where>
+            <if test="advStatus==null">
+                <if test="parentId!=null">
+                    and n.parentid=#{parentId}
+                </if>
+                <if test="parentId==null">
+                    and n.parentid is null
+                </if>
+            </if>
+            <if test="keyword!=null">
+                and n.name like concat("%",#{keyword},"%")
+            </if>
+            <if test="shareStatus>=0">
+                and n.share=#{shareStatus}
+            </if>
+            <if test="typeId!=null">
+                and n.typeid=#{typeId}
+            </if>
+            <if test="minTime!=null">
+                and n.uploadtime>=#{minTime}
+            </if>
+            <if test="maxTime!=null">
+                and n.uploadtime&lt;=#{maxTime}
+            </if>
+            <if test="userId!=null">
+                and n.userid=#{userId}
+            </if>
+        </where>
+    </sql>
+    <sql id="adv-where">
+        <where>
+            <if test="keyword!=null">
+                and name like concat(#{keyword},"%")
+            </if>
+            <if test="userId!=null">
+                and userid=#{userId}
+            </if>
+        </where>
+    </sql>
+    <select id="queryCount" resultType="java.lang.Long">
+        select count(n.id) from netdisc n join type t on n.typeid=t.id
+        <include refid="base_where"/>
+    </select>
+    <select id="list" resultMap="BaseResultMap">
+        select n.id, n.name,n.userid,n.size,n.uploadTime,n.share,n.parentid,t.id t_id,t.icon t_icon,
+        t.suffix t_suffix,t.typename t_typename
+        from netdisc n join type t on n.typeid=t.id
+        <include refid="base_where"/>
+        order by n.typeid
+        limit #{start},#{rows}
+    </select>
+    <resultMap id="menu_result" type="NetDisc">
+        <id property="id" column="id"/>
+        <result property="text" column="name"/>
+        <collection property="children" ofType="NetDisc" column="id" select="children"/>
+    </resultMap>
+    <select id="children" resultMap="menu_result">
+    select id,name from netdisc where typeid=1 and parentid=#{id}
+  </select>
+    <sql id="menus_base">
+        <if test="userId!=null">
+            and userid=#{userId}
+        </if>
+    </sql>
+    <select id="menus" resultMap="menu_result">
+        select id,name from netdisc where parentid is null and typeid=1
+        <include refid="menus_base"/>
+    </select>
+    <resultMap id="delete_result" type="NetDisc">
+        <id property="id" column="id"/>
+        <result property="text" column="name"/>
+        <collection property="children" ofType="NetDisc" column="id" select="allFile"/>
+    </resultMap>
+    <select id="allFile" resultMap="delete_result">
+    select id,name from netdisc where parentid=#{id} and typeid!=1
+  </select>
+    <resultMap id="adv-result" type="NetDisc">
+        <id property="id" column="id"/>
+        <result property="text" column="name"/>
+    </resultMap>
+    <select id="queryNameByKeyword" resultMap="adv-result">
+        select id,name from netdisc
+        <include refid="adv-where"/>
+        limit 0,10
+    </select>
+    <sql id="share_where">
+        <if test="keyword!=null">
+            and n.name like concat("%",#{keyword},"%")
+        </if>
+        <if test="typeId!=null">
+            and n.typeid=#{typeId}
+        </if>
+        <if test="minTime!=null">
+            and n.sharetime>=#{minTime}
+        </if>
+        <if test="maxTime!=null">
+            and n.sharetime&lt;=#{maxTime}
+        </if>
+    </sql>
+    <select id="queryShareCount" resultType="java.lang.Long">
+        select count(n.id) from netdisc n join type t on n.typeid=t.id join employee e on n.userid=e.id where n.share=1
+        <include refid="share_where"/>
+    </select>
+    <select id="shareList" resultMap="BaseResultMap">
+        select n.id, n.name,n.userid,n.size,n.sharetime,n.share,n.parentid,t.id t_id,t.icon t_icon,
+        t.suffix t_suffix,t.typename t_typename,e.username
+        from netdisc n join type t on n.typeid=t.id join employee e on n.userid=e.id where n.share=1
+        <include refid="share_where"/>
+        limit #{start},#{rows}
+    </select>
+    <select id="queryNameByShareKeyword" resultType="com.student.crm.domain.NetDisc">
+        select id,name text from netdisc where name like concat(#{keyword},"%") and share=1
+        limit 0,10
+    </select>
+    <select id="getUserIdByParentId" resultType="java.lang.Long">
+        select userid from netdisc where parentid=#{pId} and typeid=1 group by userid
+    </select>
+</mapper>
